@@ -7,6 +7,7 @@ import {
   endpointNotImplemented,
   globalErrorHandler,
 } from "@/middleware/errors.js";
+import { authenticateDB } from "./repositories/connection.mysql.js";
 
 dotenv.config();
 
@@ -42,6 +43,8 @@ app.use(helmet());
  */
 
 /*------------- Error middleware -------------*/
+authenticateDB();
+
 app.use(endpointNotImplemented);
 app.use(globalErrorHandler);
 
