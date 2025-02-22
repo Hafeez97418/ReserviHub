@@ -1,0 +1,36 @@
+{
+  "name": "reservihub-backend",
+  "license": "MIT",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "dev:local": "tsup --watch --onSuccess \"pnpm run local:serve\"",
+    "local:serve": "node dist/server.js",
+    "clean": "rimraf ./dist",
+    "prebuild:prod": "pnpm run clean",
+    "build:prod": "NODE_ENV=production tsup",
+    "prod:serve": "node dist/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^8.0.0",
+    "mysql2": "^3.12.0",
+    "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.4",
+    "@vitest/coverage-istanbul": "^2.1.4",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.4"
+  }
+}
