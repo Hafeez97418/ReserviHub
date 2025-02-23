@@ -1,7 +1,20 @@
 import { Sequelize } from "sequelize";
 
-export const sequelize = new Sequelize("reservihub", "root", "p1u2b3g4Mysql", {
-  host: "localhost",
+const db = {
+  name: process.env.DATABASE_NAME,
+  username: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  host: process.env.DATABASE_HOST,
+};
+const { username, name, password, host } = db;
+
+
+if (!username || !name || !password || !host) {
+  throw new Error("some database credentials are undefined");
+}
+
+export const sequelize = new Sequelize(name, username, password, {
+  host: host,
   dialect: "mysql",
 });
 
@@ -10,7 +23,6 @@ export const authenticateDB = async () => {
     await sequelize.authenticate();
     console.log("database successfully connected");
   } catch (error) {
-      console.error("Unable to connect to the database:", error);
-      process.exit(1);
+    throw new Error("Unable to connect to the database: " + `${error}`);
   }
 };

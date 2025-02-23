@@ -20,6 +20,7 @@ declare module "http" {
   }
 }
 
+
 app.use(cors());
 app.use(
   express.json({
@@ -44,6 +45,7 @@ app.use(helmet());
 
 /*------------- Error middleware -------------*/
 authenticateDB();
+
 
 app.use(endpointNotImplemented);
 app.use(globalErrorHandler);
