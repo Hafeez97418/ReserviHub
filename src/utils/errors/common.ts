@@ -1,4 +1,5 @@
 import { HttpError } from "@/utils/errors/HttpError.js";
+import { Request , Response , NextFunction } from "express";
 
 export const notImplementedError = () => {
   return new HttpError("NotImplementedError", "Not Implemented", 501);
@@ -31,3 +32,13 @@ export const tooManyRequestsError = () => {
 export const requestTimeoutError = () => {
   return new HttpError("RequestTimeoutError", "Request Timeout", 408);
 };
+
+export const catchAsyncErrors =
+  (func: Function) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      return await func(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  };
