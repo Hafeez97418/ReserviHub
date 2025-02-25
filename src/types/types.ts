@@ -4,7 +4,7 @@ export interface userInterface {
   name: string;
   email: string;
   password: string;
-  phoneNumber: number;
+  phoneNumber: string;
   id?: UUID;
   role: "user" | "admin" | "manager";
 }

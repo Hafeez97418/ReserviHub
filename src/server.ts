@@ -10,7 +10,7 @@ import {
 import { authenticateDB } from "./repositories/connection.mysql.js";
 import authRouter from "./routes/auth.routes.js";
 import session from "express-session";
-
+import UserRouter from "./routes/User.routes.js";
 
 dotenv.config();
 
@@ -25,7 +25,7 @@ declare module "http" {
 
 app.use(cors());
 
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET as string, // Change this to a strong secret
@@ -48,7 +48,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 
 /*------------- Endpoints -------------*/
+
 app.use("/api/v1", authRouter);
+app.use("/api/v1", UserRouter);
 
 /*------------- Error middleware -------------*/
 authenticateDB();
