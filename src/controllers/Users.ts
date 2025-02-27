@@ -68,7 +68,6 @@ const updateUser = catchAsyncErrors(
 const deleteUser = catchAsyncErrors(
   async (req: Request, res: Response, _next: NextFunction) => {
     const { id } = req.params;
-    console.log(id);
     if (!id) {
       return res
         .status(400)

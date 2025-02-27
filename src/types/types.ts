@@ -10,5 +10,19 @@ export interface userInterface {
 }
 
 export interface RequestWithUser extends Request {
-  user: userInterface;
+  user: {
+    userId: UUID,
+    iat: number,
+    exp:number
+  };
+}
+
+export interface BusinessInterface {
+  id: UUID;
+  managerId: UUID;
+  image: string;
+  name: string;
+  description: string;
+  category: string;
+  location: string;
 }

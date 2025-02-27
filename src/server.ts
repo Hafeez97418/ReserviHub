@@ -11,6 +11,8 @@ import { authenticateDB } from "./repositories/connection.mysql.js";
 import authRouter from "./routes/auth.routes.js";
 import session from "express-session";
 import UserRouter from "./routes/User.routes.js";
+import businessRouter from "./routes/business.routes.js";
+import reviewRouter from "./routes/review.routes.js";
 
 dotenv.config();
 
@@ -24,7 +26,7 @@ declare module "http" {
 }
 
 app.use(cors());
-
+app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
 app.use(
   session({
@@ -51,6 +53,8 @@ app.use(helmet());
 
 app.use("/api/v1", authRouter);
 app.use("/api/v1", UserRouter);
+app.use("/api/v1", businessRouter);
+app.use("/api/v1", reviewRouter);
 
 /*------------- Error middleware -------------*/
 authenticateDB();
