@@ -13,7 +13,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isIn: [["user", "manager", "admin"]],
+        isIn: [["user", "manager", "admin", "banned"]],
       },
     },
     name: {

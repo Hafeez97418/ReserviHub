@@ -56,12 +56,12 @@ const showAllRatings = catchAsyncErrors(
     const offset = isNaN(Number(skip)) ? 0 : Number(skip);
     const limitValue = isNaN(Number(limit)) ? 10 : Number(limit);
 
-    const result = await Review.findAll({
+    const { rows, count } = await Review.findAndCountAll({
       where: query,
       offset,
       limit: limitValue,
     });
-    res.status(200).json({ success: true, reviews: result });
+    res.status(200).json({ success: true, reviews: rows , count });
   }
 );
 

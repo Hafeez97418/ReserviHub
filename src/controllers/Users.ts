@@ -31,13 +31,13 @@ const getAllUsers = catchAsyncErrors(
       return res.status(200).json({ success: true, users: data });
     }
 
-    const users = await User.findAll({
+    const { rows, count } = await User.findAndCountAll({
       offset,
       limit: limitValue,
       order: [["createdAt", "DESC"]], // Sort by latest created records
     });
 
-    res.status(200).json({ success: true, users });
+    res.status(200).json({ success: true, users: rows, count });
   }
 );
 

@@ -16,6 +16,7 @@ const Business = sequelize.define(
         model: User,
         key: "id",
       },
+      unique:true,
       allowNull: true,
       onDelete: "SET NULL",
       onUpdate: "CASCADE",

@@ -132,4 +132,6 @@ pgdata/
 .yarn/install-state.gz
 .pnp.*
 
-/uploads/*
+uploads/*
+
+!uploads/.gitkeep

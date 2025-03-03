@@ -13,6 +13,7 @@ import session from "express-session";
 import UserRouter from "./routes/User.routes.js";
 import businessRouter from "./routes/business.routes.js";
 import reviewRouter from "./routes/review.routes.js";
+import IntervalRouter from "./routes/interval.routes.js";
 
 dotenv.config();
 
@@ -55,6 +56,7 @@ app.use("/api/v1", authRouter);
 app.use("/api/v1", UserRouter);
 app.use("/api/v1", businessRouter);
 app.use("/api/v1", reviewRouter);
+app.use("/api/v1", IntervalRouter);
 
 /*------------- Error middleware -------------*/
 authenticateDB();

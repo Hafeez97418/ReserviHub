@@ -7,7 +7,7 @@ import {
   updateBusinessDetails,
   uploadBusinessImage,
 } from "@/controllers/Business.js";
-import { isLoggedIn } from "@/middleware/common.js";
+import { checkRole, isLoggedIn } from "@/middleware/common.js";
 import { validateCredentials } from "@/middleware/credentials.js";
 import express from "express";
 import { body } from "express-validator";
@@ -53,25 +53,40 @@ const businessValidation = [
 const businessRouter = express.Router();
 businessRouter
   .route("/business")
-  .post(isLoggedIn, businessValidation, validateCredentials, createBusiness)
-  .get(getAllBusinesses);
-
-businessRouter
-  .route("/image/:id")
-  .post(isLoggedIn, upload.single("avatar"), uploadBusinessImage)
-  .delete(isLoggedIn, deleteBusinessImage);
-
-businessRouter
-  .route("/business/:id")
+  .post(
+    isLoggedIn,
+    checkRole("user"),
+    businessValidation,
+    validateCredentials,
+    createBusiness
+  )
+  .get(getAllBusinesses)
   .put(
     isLoggedIn,
+    checkRole("manager"),
     businessValidation,
     validateCredentials,
     updateBusinessDetails
   )
-  .delete(isLoggedIn, deleteBusiness);
+  .delete(isLoggedIn, checkRole("manager"), deleteBusiness);
 
-businessRouter.get("/analytics/:id", isLoggedIn, getBusinessAnalytics);
+businessRouter
+  .route("/image")
+  .post(
+    isLoggedIn,
+    checkRole("manager"),
+    upload.single("avatar"),
+    uploadBusinessImage
+  )
+  .delete(isLoggedIn, checkRole("manager"), deleteBusinessImage);
 
+businessRouter.get(
+  "/analytics",
+  isLoggedIn,
+  checkRole("manager"),
+  getBusinessAnalytics
+);
 
 export default businessRouter;
+
+//security check 1 is completed

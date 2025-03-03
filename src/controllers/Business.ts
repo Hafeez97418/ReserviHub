@@ -41,7 +41,7 @@ const createBusiness = catchAsyncErrors(
       description,
       location,
     });
-    
+
     res.status(201).json({
       success: true,
       message: "Business created successfully",
@@ -52,6 +52,7 @@ const createBusiness = catchAsyncErrors(
 // 2 upload and replace business image
 const uploadBusinessImage = catchAsyncErrors(
   async (req: RequestWithUser, res: Response, _next: NextFunction) => {
+    const { userId } = req.user;
     if (!req.file) {
       return res
         .status(400)
@@ -59,7 +60,7 @@ const uploadBusinessImage = catchAsyncErrors(
     }
 
     const business = (await Business.findOne({
-      where: { id: req.params.id },
+      where: { managerId:userId },
     })) as any;
 
     if (!business) {
@@ -88,16 +89,16 @@ const uploadBusinessImage = catchAsyncErrors(
 
 // 3 delete business image
 const deleteBusinessImage = catchAsyncErrors(
-  async (req: Request, res: Response, _next: NextFunction) => {
-    const { id } = req.params;
-    const business = (await Business.findOne({ where: { id } })) as any;
+  async (req: RequestWithUser, res: Response, _next: NextFunction) => {
+    const { userId } = req.user;
+    const business = (await Business.findOne({ where: { managerId:userId } })) as any;
     if (!business) {
       res
         .status(400)
         .json({ success: false, message: "Business ID is Incorrect" });
       return;
     }
-    const result = await deleteImage(id);
+    const result = await deleteImage(business.id);
 
     if (!result.success) {
       res
@@ -127,23 +128,25 @@ const getAllBusinesses = catchAsyncErrors(
     if (category) query.category = { [Op.like]: `%${category}%` };
     if (location) query.location = { [Op.like]: `%${location}%` };
 
-    const data = await Business.findAll({
+    const { rows, count } = await Business.findAndCountAll({
       offset,
       limit: limitValue,
       where: query,
     });
 
-    res.status(200).json({ success: true, businesses: data });
+    res.status(200).json({ success: true, businesses: rows, count });
   }
 );
 
 // 5 update Business details
 
 const updateBusinessDetails = catchAsyncErrors(
-  async (req: Request, res: Response, _next: NextFunction) => {
+  async (req: RequestWithUser, res: Response, _next: NextFunction) => {
     const { name, description, location, category } = req.body;
-    const { id } = req.params;
-    const details = (await Business.findOne({ where: { id } })) as any;
+    const { userId } = req.user;
+    const details = (await Business.findOne({
+      where: { managerId: userId },
+    })) as any;
     if (!details) {
       res.status(404).json({ success: false, message: "business not found" });
       return;
@@ -164,28 +167,31 @@ const updateBusinessDetails = catchAsyncErrors(
 // 6 delete business
 const deleteBusiness = catchAsyncErrors(
   async (req: RequestWithUser, res: Response, _next: NextFunction) => {
-    const { id } = req.params;
     const { userId } = req.user;
 
-    const user = (await User.findOne({ where: { id: userId } })) as any;
+    const business: any = await Business.findOne({
+      where: { managerId: userId },
+    });
+    const user: any = await User.findOne({ where: { id: userId } });
+
     if (!user) {
       res.status(404).json({ success: false, message: "user not found" });
       return;
     }
-    const data = await deleteImage(id);
-    
-    if (!data.success && data.result.result !== 'not found') {
+    if (!business) {
+      res.status(404).json({ success: false, message: "business not found" });
+      return;
+    }
+    const data = await deleteImage(business.id);
+
+    if (!data.success && data.result.result !== "not found") {
       res
         .status(500)
         .json({ success: false, message: "Failed to delete image" });
       return;
     }
 
-    const deleteCount = await Business.destroy({ where: { id } });
-    if (deleteCount === 0) {
-      res.status(404).json({ success: false, message: "business not found" });
-      return;
-    }
+    await business.destroy();
 
     user.role = "user";
     await user.save();
@@ -198,17 +204,23 @@ const deleteBusiness = catchAsyncErrors(
 
 const getBusinessAnalytics = catchAsyncErrors(
   async (req: RequestWithUser, res: Response, _next: NextFunction) => {
-    const { id } = req.params;
-    const analytics = await BusinessAnalytics.findOne({
-      where: { businessId: id },
-    });
+    const { userId } = req.user;
+    const business = await Business.findOne({
+      where: { managerId: userId },
+    }) as any;
+    if (!business) {
+      res.status(404).json({ success: false, message: "business not found" });
+      return;
+    }
+    const analytics = await BusinessAnalytics.findOne({ where: { BusinessId: business.id } });
     if (!analytics) {
       res.status(404).json({ success: false, message: "analytics not found" });
-      return
+      return;
     }
     res.status(200).json({ success: true, analytics });
   }
 );
+
 export {
   createBusiness,
   uploadBusinessImage,
@@ -216,5 +228,5 @@ export {
   getAllBusinesses,
   updateBusinessDetails,
   deleteBusiness,
-  getBusinessAnalytics
+  getBusinessAnalytics,
 };
