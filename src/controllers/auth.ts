@@ -99,7 +99,7 @@ const Register = catchAsyncErrors(
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Create user
-    const storedUser = await User.create({
+    const storedUser:any = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -113,7 +113,7 @@ const Register = catchAsyncErrors(
 
     // Generate JWT Token
     const token = jwt.sign(
-      { user: storedUser },
+      { userId: storedUser.id, role: storedUser.role },
       process.env.JWT_SECRET as string,
       {
         expiresIn: "7d",

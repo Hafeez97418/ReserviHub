@@ -40,9 +40,9 @@ const Appointment = sequelize.define(
       onDelete: "CASCADE",
     },
     status: {
-      type: DataTypes.ENUM("booked", "confirmed", "cancelled", "completed"),
+      type: DataTypes.ENUM("pending", "confirmed", "cancelled", "completed", "failed"),
       allowNull: false,
-      defaultValue: "booked",
+      defaultValue: "pending",
     },
     startTime: {
       type: DataTypes.DATE, // Supports both date & time
@@ -52,6 +52,10 @@ const Appointment = sequelize.define(
       type: DataTypes.DATE, // Supports both date & time
       allowNull: true, // Nullable for daily reservations
     },
+    expiresAt: {
+      type: DataTypes.DATE,
+      allowNull:true
+    }
   },
   {
     timestamps: true, // Adds createdAt & updatedAt automatically

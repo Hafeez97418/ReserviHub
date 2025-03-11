@@ -4,6 +4,8 @@ import { Request, Response, NextFunction } from "express";
 import { BusinessInterface, RequestWithUser } from "@/types/types.js";
 import { deleteImage, uploadImage } from "@/repositories/cloudinary.js";
 import { Op } from "sequelize";
+import { createQueryByAI } from "@/repositories/gemini.js";
+import { getAnalytics } from "@/utils/utils.js";
 
 // 1 create business account
 const createBusiness = catchAsyncErrors(
@@ -41,6 +43,10 @@ const createBusiness = catchAsyncErrors(
       description,
       location,
     });
+    const { id } = business.get();
+    await BusinessAnalytics.create({
+      businessId: id,
+    });
 
     res.status(201).json({
       success: true,
@@ -60,7 +66,7 @@ const uploadBusinessImage = catchAsyncErrors(
     }
 
     const business = (await Business.findOne({
-      where: { managerId:userId },
+      where: { managerId: userId },
     })) as any;
 
     if (!business) {
@@ -91,7 +97,9 @@ const uploadBusinessImage = catchAsyncErrors(
 const deleteBusinessImage = catchAsyncErrors(
   async (req: RequestWithUser, res: Response, _next: NextFunction) => {
     const { userId } = req.user;
-    const business = (await Business.findOne({ where: { managerId:userId } })) as any;
+    const business = (await Business.findOne({
+      where: { managerId: userId },
+    })) as any;
     if (!business) {
       res
         .status(400)
@@ -142,7 +150,7 @@ const getAllBusinesses = catchAsyncErrors(
 
 const updateBusinessDetails = catchAsyncErrors(
   async (req: RequestWithUser, res: Response, _next: NextFunction) => {
-    const { name, description, location, category } = req.body;
+    const { name, description, location, category, payoutAccountId } = req.body;
     const { userId } = req.user;
     const details = (await Business.findOne({
       where: { managerId: userId },
@@ -155,6 +163,7 @@ const updateBusinessDetails = catchAsyncErrors(
     details.description = description;
     details.location = location;
     details.category = category;
+    details.payoutAccountId = payoutAccountId;
     await details.save();
     res.status(200).json({
       success: true,
@@ -205,19 +214,74 @@ const deleteBusiness = catchAsyncErrors(
 const getBusinessAnalytics = catchAsyncErrors(
   async (req: RequestWithUser, res: Response, _next: NextFunction) => {
     const { userId } = req.user;
-    const business = await Business.findOne({
+    const business = (await Business.findOne({
       where: { managerId: userId },
-    }) as any;
+    })) as any;
     if (!business) {
       res.status(404).json({ success: false, message: "business not found" });
       return;
     }
-    const analytics = await BusinessAnalytics.findOne({ where: { BusinessId: business.id } });
-    if (!analytics) {
+    const data = await getAnalytics(business.id);
+    if (!data.analytics || !data.success) {
       res.status(404).json({ success: false, message: "analytics not found" });
       return;
     }
-    res.status(200).json({ success: true, analytics });
+    res.status(200).json({ success: true, analytics: data.analytics });
+  }
+);
+
+const getBusinessByAi = catchAsyncErrors(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const prompt = req.query.prompt as string;
+
+    if (!prompt) {
+      return res.status(400).json({
+        success: false,
+        message: "Query prompt is required.",
+      });
+    }
+
+    const response = await createQueryByAI(prompt);
+
+    if (!response.success || !response) {
+      return res.status(500).json({
+        success: false,
+        message:
+          response.message ||
+          "Oops! Something went wrong. Please try again later.",
+      });
+    }
+
+    // Handle pagination (default: 10)
+    const limit = Number(req.query.limit) || 10;
+    const offset = Number(req.query.offset) || 0;
+    const searchConditions = Object.entries(response.response).reduce(
+      (acc: any, [key, value]) => {
+        if (typeof value === "string") {
+          acc[key] = { [Op.like]: `%${value.toLowerCase()}%` }; // Adds wildcard search
+        } else if (value !== null) {
+          acc[key] = value; // Keep non-string, non-null values as they are
+        }
+        return acc;
+      },
+      {}
+    );
+    const { count, rows } = await Business.findAndCountAll({
+      where: { [Op.or]: { ...searchConditions } },
+      limit,
+      offset,
+    });
+
+    if (count === 0) {
+      return res.status(400).json({
+        success: false,
+        rows,
+        message:
+          "Could not find any businesses with this prompt. Try something else.",
+      });
+    }
+
+    res.status(200).json({ success: true, count, rows });
   }
 );
 
@@ -229,4 +293,5 @@ export {
   updateBusinessDetails,
   deleteBusiness,
   getBusinessAnalytics,
+  getBusinessByAi,
 };

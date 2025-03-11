@@ -34,7 +34,7 @@ const BusinessAnalytics = sequelize.define("BusinessAnalytics", {
   },
   peakHours: {
     type: DataTypes.JSON, // Stores peak hours data
-    defaultValue: {},
+    defaultValue: [],
   },
 });
 

@@ -3,7 +3,6 @@ import { DataTypes } from "sequelize";
 import User from "./User.js";
 import Appointment from "./Appointment.js";
 
-
 const Payment = sequelize.define("Payment", {
   id: {
     type: DataTypes.UUID,
@@ -32,7 +31,11 @@ const Payment = sequelize.define("Payment", {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM("pending", "paid", "failed"),
+    type: DataTypes.ENUM("pending", "paid", "failed" , "refunded"),
+    allowNull: false,
+  },
+  order: {
+    type: DataTypes.JSON(),
     allowNull: false,
   },
 });

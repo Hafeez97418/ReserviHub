@@ -4,13 +4,14 @@ import {
   deleteBusinessImage,
   getAllBusinesses,
   getBusinessAnalytics,
+  getBusinessByAi,
   updateBusinessDetails,
   uploadBusinessImage,
 } from "@/controllers/Business.js";
 import { checkRole, isLoggedIn } from "@/middleware/common.js";
 import { validateCredentials } from "@/middleware/credentials.js";
 import express from "express";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -49,6 +50,7 @@ const businessValidation = [
     .isString()
     .withMessage("description should not be empty"),
 ];
+
 //routes
 const businessRouter = express.Router();
 businessRouter
@@ -86,7 +88,15 @@ businessRouter.get(
   checkRole("manager"),
   getBusinessAnalytics
 );
-
+businessRouter.get(
+  "/business/search/ai",
+  [
+    query("prompt")
+      .notEmpty()
+      .withMessage("your prompt query must not be empty"),
+  ],
+  getBusinessByAi
+);
 export default businessRouter;
 
 //security check 1 is completed

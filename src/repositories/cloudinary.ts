@@ -26,7 +26,6 @@ const uploadImage = async (imagePath: string, businessId: string) => {
 
     return result; // Return the image URL
   } catch (error) {
-    console.error("Image upload failed:", error);
     return null;
   }
 };

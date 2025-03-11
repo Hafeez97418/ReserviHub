@@ -12,7 +12,7 @@ export const globalErrorHandler = (
 ) => {
   if (process.env.NODE_ENV !== "production") {
     console.error(`Timestamp: ${new Date().toISOString()}`);
-    console.error("Error:", err.message, err.name);
+    console.error("Error:", err.message, err.name , err.stack);
   }
   const responseStatus = err instanceof HttpError ? err.status : 500;
   switch (err.name) {

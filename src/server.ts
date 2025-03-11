@@ -14,6 +14,9 @@ import UserRouter from "./routes/User.routes.js";
 import businessRouter from "./routes/business.routes.js";
 import reviewRouter from "./routes/review.routes.js";
 import IntervalRouter from "./routes/interval.routes.js";
+import AppointmentRouter from "./routes/Appointment.routes.js";
+import { appointmentSideJobs } from "./utils/utils.js";
+import paymentRouter from "./routes/payment.routes.js";
 
 dotenv.config();
 
@@ -57,9 +60,13 @@ app.use("/api/v1", UserRouter);
 app.use("/api/v1", businessRouter);
 app.use("/api/v1", reviewRouter);
 app.use("/api/v1", IntervalRouter);
+app.use("/api/v1", AppointmentRouter);
+app.use("/api/v1", paymentRouter);
 
 /*------------- Error middleware -------------*/
+
 authenticateDB();
+appointmentSideJobs();
 
 app.use(endpointNotImplemented);
 app.use(globalErrorHandler);
