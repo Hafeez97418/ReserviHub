@@ -4,7 +4,10 @@ import { Request, Response, NextFunction } from "express";
 import { BusinessInterface, RequestWithUser } from "@/types/types.js";
 import { deleteImage, uploadImage } from "@/repositories/cloudinary.js";
 import { Op } from "sequelize";
-import { createQueryByAI } from "@/repositories/gemini.js";
+import {
+  createQueryByAI,
+  getBusinessAdviceByAI,
+} from "@/repositories/gemini.js";
 import { getAnalytics } from "@/utils/utils.js";
 
 // 1 create business account
@@ -285,6 +288,25 @@ const getBusinessByAi = catchAsyncErrors(
   }
 );
 
+const getAdviceByAgent = catchAsyncErrors(
+  async (req: RequestWithUser, res: Response, _next: NextFunction) => {
+    const { businessId } = req.params;
+    const business = (await Business.findByPk(
+      businessId
+    )) as BusinessInterface | null;
+    if (!business) {
+      return res
+        .status(404)
+        .json({ success: false, message: "business not found" });
+    }
+    const result = await getBusinessAdviceByAI(business);
+    if (!result.success) {
+      res.status(500).json(result);
+    }
+    res.status(200).json({ success: true, result });
+  }
+);
+
 export {
   createBusiness,
   uploadBusinessImage,
@@ -294,4 +316,5 @@ export {
   deleteBusiness,
   getBusinessAnalytics,
   getBusinessByAi,
+  getAdviceByAgent,
 };

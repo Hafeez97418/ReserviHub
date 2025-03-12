@@ -1,3 +1,5 @@
+import BusinessAnalytics from "@/models/BusinessAnalytics.js";
+import { analyticsInterface, BusinessInterface } from "@/types/types.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const API_KEY = process.env.AI_API_KEY;
@@ -19,7 +21,6 @@ const createQueryByAI = async (prompt: string) => {
       .trim()
       .replace(/`|json/g, "");
 
-
     const response = JSON.parse(message);
 
     return { success: true, response };
@@ -32,4 +33,46 @@ const createQueryByAI = async (prompt: string) => {
   }
 };
 
-export { createQueryByAI };
+const getBusinessAdviceByAI = async (business: Partial<BusinessInterface>) => {
+  try {
+    const analytics = (await BusinessAnalytics.findOne({
+      where: { businessId: business.id },
+    })) as analyticsInterface | null;
+    if (!analytics) {
+      return { success: false, message: "analytics not found" };
+    }
+    const regex = new RegExp(`[/\\"]`, "gi");
+    const analyticsData = {
+      totalAppointments: analytics.totalAppointments,
+      totalRevenue: analytics.totalRevenue,
+      missedAppointments: `[${analytics.missedAppointments} , info: appointments which users have cancelled or failed to pay before booking]`,
+      completedAppointments: analytics.completedAppointments,
+      peakHours: `[${JSON.stringify(analytics.peakHours).replace(
+        regex,
+        ""
+      )} , info: ignore peakHours.time]`,
+    };
+    const { name, description, location, category } = business;
+
+    const query = [
+      "give business advice for growth",
+      `business:${JSON.stringify({
+        name,
+        description,
+        location,
+        category,
+      }).replace(regex, "")}`,
+      `analytics:${JSON.stringify(analyticsData).replace(regex, "")}`,
+      "give a short clear response in a paragraph",
+    ];
+    const result = await model.generateContent(query);
+    let response = result.response;
+    return {
+      success: true,
+      result: response.text(),
+    };
+  } catch (error:any) {
+    return { success: false, error: error.message || "An error occurred" };
+  }
+};
+export { createQueryByAI, getBusinessAdviceByAI };

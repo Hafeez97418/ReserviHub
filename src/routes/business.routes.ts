@@ -2,6 +2,7 @@ import {
   createBusiness,
   deleteBusiness,
   deleteBusinessImage,
+  getAdviceByAgent,
   getAllBusinesses,
   getBusinessAnalytics,
   getBusinessByAi,
@@ -96,6 +97,12 @@ businessRouter.get(
       .withMessage("your prompt query must not be empty"),
   ],
   getBusinessByAi
+);
+businessRouter.get(
+  "/business/advice/ai/:businessId",
+  isLoggedIn,
+  checkRole("manager"),
+  getAdviceByAgent
 );
 export default businessRouter;
 

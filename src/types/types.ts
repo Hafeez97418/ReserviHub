@@ -44,3 +44,15 @@ export interface AppointmentIntervalInterface {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+export interface analyticsInterface {
+  totalAppointments: number;
+  completedAppointments: number;
+  missedAppointments: number;
+  totalRevenue: string;
+  peakHours: JSON;
+  businessId: string;
+  id: string;
+  save?: Function;
+}
