@@ -1,5 +1,11 @@
 import { catchAsyncErrors } from "@/utils/errors/common.js";
-import { Business, BusinessAnalytics, User } from "@/models/database.js";
+import {
+  Appointment,
+  Business,
+  BusinessAnalytics,
+  Payment,
+  User,
+} from "@/models/database.js";
 import { Request, Response, NextFunction } from "express";
 import { BusinessInterface, RequestWithUser } from "@/types/types.js";
 import { deleteImage, uploadImage } from "@/repositories/cloudinary.js";
@@ -307,6 +313,19 @@ const getAdviceByAgent = catchAsyncErrors(
   }
 );
 
+const getCustomerArrivals = catchAsyncErrors(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const { intervalId } = req.params;
+    const data = await Appointment.findAll({
+      where: { intervalId },
+      include: [
+        { model: User, attributes: ["id", "name", "email"] },
+        { model: Payment, attributes: ["id", "status", "amount"] },
+      ],
+    });
+    res.status(200).json({ success: true, result: data });
+  }
+);
 export {
   createBusiness,
   uploadBusinessImage,
@@ -317,4 +336,5 @@ export {
   getBusinessAnalytics,
   getBusinessByAi,
   getAdviceByAgent,
+  getCustomerArrivals
 };

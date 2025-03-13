@@ -1,5 +1,6 @@
 import Appointment from "@/models/Appointment.js";
 import BusinessAnalytics from "@/models/BusinessAnalytics.js";
+import { io } from "@/server.js";
 import cron from "node-cron";
 import { Op, Sequelize } from "sequelize";
 
@@ -20,6 +21,7 @@ const appointmentSideJobs = () => {
         { status: "completed" },
         {
           where: {
+            status:"confirmed",
             endTime: { [Op.lt]: new Date() }, // Appointments whose endTime has passed
           },
         }
@@ -167,4 +169,10 @@ const updateRevenue = async (businessId: string, amount: number) => {
   }
 };
 
-export { appointmentSideJobs, getAnalytics, updatePeakHours, updateRevenue };
+
+const sendEvent = (id: string, eventName: string, data: any) => {
+  const ev = eventName;
+  const args = data ? data : {}; 
+  io.to(id).emit(ev, args);
+}
+export { appointmentSideJobs, getAnalytics, updatePeakHours, updateRevenue , sendEvent};

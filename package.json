@@ -34,7 +34,8 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
     "raw-body": "^3.0.0",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -55,7 +56,13 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "bcrypt"
+      "bcrypt",
+      "bufferutil",
+      "utf-8-validate"
     ]
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.9",
+    "utf-8-validate": "^6.0.5"
   }
 }

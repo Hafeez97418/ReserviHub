@@ -6,6 +6,7 @@ import {
   getAllBusinesses,
   getBusinessAnalytics,
   getBusinessByAi,
+  getCustomerArrivals,
   updateBusinessDetails,
   uploadBusinessImage,
 } from "@/controllers/Business.js";
@@ -103,6 +104,12 @@ businessRouter.get(
   isLoggedIn,
   checkRole("manager"),
   getAdviceByAgent
+);
+businessRouter.get(
+  "/business/arrivals/:intervalId",
+  isLoggedIn,
+  checkRole("manager"),
+  getCustomerArrivals
 );
 export default businessRouter;
 

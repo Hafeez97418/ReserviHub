@@ -6,6 +6,7 @@ import axios from "axios";
 Cashfree.XClientId = process.env.GATEWAY_CLIENT_ID;
 Cashfree.XClientSecret = process.env.GATEWAY_SECRET;
 Cashfree.XEnvironment = Cashfree.Environment.SANDBOX;
+const GATEWAY_BASE_URL = process.env.GATEWAY_BASE_URL;
 
 /**
  * Creates an order using Cashfree API.
@@ -28,7 +29,7 @@ async function createOrder(request: CreateOrderRequest) {
 const verifyPayment = async (orderId: string) => {
   try {
     const response = await axios.get(
-      `https://sandbox.cashfree.com/pg/orders/${orderId}`,
+      `${GATEWAY_BASE_URL}/pg/orders/${orderId}`,
       {
         headers: {
           "x-client-id": process.env.GATEWAY_CLIENT_ID,
@@ -72,7 +73,7 @@ const processRefund = async (appointmentId: string) => {
     const orderId = payment.order.response.order_id;
 
     const response = await axios.get(
-      `https://sandbox.cashfree.com/pg/orders/${orderId}/refunds`,
+      `${GATEWAY_BASE_URL}/pg/orders/${orderId}/refunds`,
       {
         headers: {
           "x-client-id": process.env.GATEWAY_CLIENT_ID,

@@ -8,11 +8,11 @@ import {
   verifyPayment,
 } from "@/repositories/paymentGateway.js";
 import { RequestWithUser } from "@/types/types.js";
-import {
-  catchAsyncErrors,
-} from "@/utils/errors/common.js";
-import { updatePeakHours, updateRevenue } from "@/utils/utils.js";
+import { catchAsyncErrors } from "@/utils/errors/common.js";
+import { sendEvent, updatePeakHours, updateRevenue } from "@/utils/utils.js";
 import { Request, Response, NextFunction } from "express";
+
+
 /**
  * create new appointment.
  */
@@ -85,7 +85,7 @@ const bookAppointment = catchAsyncErrors(
         customer_email: user.email,
       },
       order_meta: {
-        return_url: `http://localhost:3000/api/v1/appointment-confirmation/${appointment.id}?returnUrl=${process.env.FRONTEND_BASE_URL}`,
+        return_url: `${process.env.FRONTEND_BASE_URL}/complete`,
       },
     });
     if (!order.success) {
@@ -105,6 +105,10 @@ const bookAppointment = catchAsyncErrors(
     });
 
     interval.availableSlots -= 1;
+    sendEvent(intervalId, "new_appointment", {
+      count: 1,
+      available: interval.availableSlots,
+    });
     if (interval.availableSlots === 0) {
       interval.booked = true;
     }
@@ -236,6 +240,10 @@ const cancelAppointment = catchAsyncErrors(
     )) as any;
     if (interval) {
       interval.availableSlots += 1;
+      sendEvent(interval.id, "failed_appointment", {
+        count: 1,
+        available: interval.availableSlots,
+      });
       interval.booked = false;
       await interval.save();
     }
@@ -285,18 +293,20 @@ const completeAppointment = catchAsyncErrors(
     const interval: any = await AppointmentInterval.findByPk(
       appointment.intervalId
     );
-    interval.availableSlots -= 1;
+    interval.availableSlots += 1;
+    sendEvent(interval.id, "completed_appointment", {
+      count: 1,
+      available: interval.availableSlots,
+    });
     const result = await updateRevenue(
       interval.businessId,
       Number(interval.price)
     );
     if (!result.success) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "something went wrong please try again after some time",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "something went wrong please try again after some time",
+      });
     }
     await interval.save();
     await appointment.save();
@@ -365,6 +375,10 @@ const webHookRequests = catchAsyncErrors(
                 0,
                 interval.availableSlots + 1
               );
+               sendEvent(interval.id, "failed_appointment", {
+                 count: 1,
+                 available: interval.availableSlots,
+               });
               interval.booked = false;
               await interval.save();
             }

@@ -2,7 +2,6 @@ import Appointment from "./Appointment.js";
 import AppointmentInterval from "./AppointmentInterval.js";
 import Business from "./Business.js";
 import BusinessAnalytics from "./BusinessAnalytics.js";
-import AiChatbotPredictions from "./ChatBotPredictions.js";
 import Payment from "./Payments.js";
 import Review from "./Reviews.js";
 import User from "./User.js";
@@ -31,14 +30,12 @@ Business.hasMany(Review, { foreignKey: "businessId" });
 Business.hasOne(BusinessAnalytics, { foreignKey: "businessId" });
 BusinessAnalytics.belongsTo(Business, { foreignKey: "businessId" });
 
-Business.hasMany(AiChatbotPredictions, { foreignKey: "businessId" });
-AiChatbotPredictions.belongsTo(Business, { foreignKey: "businessId" });
+
 
 export {
   User,
   Business,
   BusinessAnalytics,
-  AiChatbotPredictions,
   Appointment,
   AppointmentInterval,
   Review,

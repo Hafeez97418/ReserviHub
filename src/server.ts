@@ -17,10 +17,19 @@ import IntervalRouter from "./routes/interval.routes.js";
 import AppointmentRouter from "./routes/Appointment.routes.js";
 import { appointmentSideJobs } from "./utils/utils.js";
 import paymentRouter from "./routes/payment.routes.js";
-
-dotenv.config();
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 const app = express();
+dotenv.config();
+const server = createServer(app);
+export const io = new Server(server, {
+  cors: {
+    origin: "*", // Change this for security in production
+    methods: ["GET", "POST"],
+  },
+});
+
 const PORT = process.env.PORT || 3000;
 
 declare module "http" {
@@ -34,7 +43,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
 app.use(
   session({
-    secret: process.env.SESSION_SECRET as string, // Change this to a strong secret
+    secret: process.env.SESSION_SECRET as string,
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 10 * 60 * 1000 }, // Session expires in 10 minutes
@@ -49,9 +58,24 @@ app.use(
   })
 );
 app.use(express.urlencoded({ extended: false }));
+io.on("connection", (socket) => {
+  //user on interval page
+  socket.on("onIntervalPage", (intervalId) => {
+    socket.join(intervalId);
+    console.log("user joined to:-", intervalId);
+    
+  });
+
+  //from multiple uses a single user leaves interval page
+  socket.on("offIntervalPage", (intervalId) => {
+    socket.leave(intervalId);
+  });
+});
 
 /*------------- Security Config -------------*/
 app.use(helmet());
+
+/*--------------IO connections ---------------*/
 
 /*------------- Endpoints -------------*/
 
@@ -62,7 +86,10 @@ app.use("/api/v1", reviewRouter);
 app.use("/api/v1", IntervalRouter);
 app.use("/api/v1", AppointmentRouter);
 app.use("/api/v1", paymentRouter);
-
+app.get("/test", (_req, res) => {
+  io.emit("test", { message: "hello" });
+  res.status(200).json({ success: true, message: "connection is made" });
+});
 /*------------- Error middleware -------------*/
 
 authenticateDB();
@@ -71,4 +98,4 @@ appointmentSideJobs();
 app.use(endpointNotImplemented);
 app.use(globalErrorHandler);
 
-app.listen(PORT, () => console.log(`Service listening on port ${PORT}...`));
+server.listen(PORT, () => console.log(`Service listening on port ${PORT}...`));
