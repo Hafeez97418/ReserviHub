@@ -1,0 +1,83 @@
+[
+    {
+        "id": "1a1f5c1e-b913-4d0d-9373-1b8476c9c1e0",
+        "userId": "3ff02c75-7dff-47ad-b8c6-a18e2ecc0a66",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 4,
+        "review": "Great service, will recommend!",
+        "createdAt": "2025-03-15T11:23:45.000Z",
+        "updatedAt": "2025-03-15T11:23:45.000Z"
+    },
+    {
+        "id": "2d345c2b-8f62-4cb6-86cb-7de1f0935c3e",
+        "userId": "9aa13f45-2db8-4910-93bc-85ff1b2f29a3",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 5,
+        "review": "Absolutely loved it!",
+        "createdAt": "2025-03-14T10:00:12.000Z",
+        "updatedAt": "2025-03-14T10:00:12.000Z"
+    },
+    {
+        "id": "3f2bc9fe-55d0-41e4-a9f9-ecdf87e7e432",
+        "userId": "7be4f214-6740-4ab0-8c53-7c4f51b7cf29",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 3,
+        "review": "Decent experience but could improve.",
+        "createdAt": "2025-03-13T16:45:00.000Z",
+        "updatedAt": "2025-03-13T16:45:00.000Z"
+    },
+    {
+        "id": "4c7de2c1-9341-4b65-b4f4-267b90e51427",
+        "userId": "c2fa764f-13d2-4082-ae02-f0e9f4f6d71d",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 1,
+        "review": "Very bad experience. Not recommended.",
+        "createdAt": "2025-03-12T19:30:29.000Z",
+        "updatedAt": "2025-03-12T19:30:29.000Z"
+    },
+    {
+        "id": "5b9e7a4a-4ac0-4560-a99b-70d69afc72e3",
+        "userId": "3b14d567-4494-4cc9-98d4-4c734b9be8b9",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 5,
+        "review": "Perfect! Exceeded expectations.",
+        "createdAt": "2025-03-11T14:10:00.000Z",
+        "updatedAt": "2025-03-11T14:10:00.000Z"
+    },
+    {
+        "id": "6a048c65-932c-4c64-bb7b-7f6a44e60ad7",
+        "userId": "88aabb44-7f14-41a9-9e17-3e0e4e74218e",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 2,
+        "review": "Service was slow, but friendly staff.",
+        "createdAt": "2025-03-10T08:15:45.000Z",
+        "updatedAt": "2025-03-10T08:15:45.000Z"
+    },
+    {
+        "id": "7d9bcf0f-c6a9-4f2b-abe9-8a1820b51124",
+        "userId": "5dd35f90-dc4f-4aef-9f5b-4c47f7c6a4b8",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 4,
+        "review": "Good value for money.",
+        "createdAt": "2025-03-09T18:05:00.000Z",
+        "updatedAt": "2025-03-09T18:05:00.000Z"
+    },
+    {
+        "id": "8e3fa38c-6845-4f57-9bb8-9c9c3c7d58e9",
+        "userId": "fa0e7190-3fc1-48ad-98a9-0b676a7b1a13",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 5,
+        "review": "Highly professional and quick service.",
+        "createdAt": "2025-03-08T12:00:00.000Z",
+        "updatedAt": "2025-03-08T12:00:00.000Z"
+    },
+    {
+        "id": "9b56f99c-29a5-4d1c-9726-d834a5d50300",
+        "userId": "bc77e02c-869e-41e4-a10d-12e5fdad4372",
+        "businessId": "5be17b64-d852-44c2-b269-6ce3e097458a",
+        "rating": 3,
+        "review": "Okay experience, nothing special.",
+        "createdAt": "2025-03-07T09:20:00.000Z",
+        "updatedAt": "2025-03-07T09:20:00.000Z"
+    }
+]
