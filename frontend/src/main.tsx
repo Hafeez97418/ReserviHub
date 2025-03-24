@@ -9,6 +9,14 @@ import store from "./app/store.ts"
 import { HandleDarkMode } from './lib/utils.ts'
 import Listings from './pages/Listings.tsx'
 import BusinessDetails from './pages/BusinessDetails.tsx'
+import MerchantDashboard from './Layouts/MerchantDashboard.tsx'
+import MerchantRegister from './pages/MerchantRegister.tsx'
+import Analytics from './pages/Analytics.tsx'
+import Credentials from './pages/Credentials.tsx'
+import Bookings from './pages/Bookings.tsx'
+import Slots from './pages/Slots.tsx'
+import Leads from './pages/Leads.tsx'
+
 HandleDarkMode();
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -16,9 +24,16 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<Home />} >
           <Route index element={<Listings />} />
-          <Route path='business/:businessName' element={<BusinessDetails/>}></Route>
+          <Route path='business/:businessName' element={<BusinessDetails />} />
+          <Route path="merchant/create-account" element={<MerchantRegister />} />
+          <Route path="bookings" element={<Bookings />} />
         </Route>
-        <Route path="dashboard" element={<div>dashboard</div>} />
+        <Route path='/merchant' element={<MerchantDashboard />}>
+          <Route index element={<Analytics />} />
+          <Route path='credentials' element={<Credentials />} />
+          <Route path="slots" element={<Slots />} />
+          <Route path="leads/:intervalId" element={<Leads />} />
+        </Route>
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
         <Route path='*' element={<div>404 not found</div>} />

@@ -1,5 +1,5 @@
 import transporter from "@/repositories/nodemailer.js";
-import { userInterface } from "@/types/types.js";
+import { RequestWithUser, userInterface } from "@/types/types.js";
 import { catchAsyncErrors } from "@/utils/errors/common.js";
 import optMailHTML from "@/utils/mail.js";
 import { Request, Response, NextFunction, CookieOptions } from "express";
@@ -75,14 +75,17 @@ const Register = catchAsyncErrors(
     }
     const { name, email, password, otp, phoneNumber } =
       req.body as userInterfaceWithOtp;
-
     // Validate OTP existence
-    if (!req.session.otp || !otp) {
+    if (!otp) {
       return res
         .status(400)
         .json({ success: false, message: "OTP is required" });
     }
-
+    if (!req.session.otp) {
+      return res
+        .status(400)
+        .json({ success: false, message: "your otp got expired" });
+    }
     // Check if OTP is expired
     if (!req.session.otpExpires || Date.now() > req.session.otpExpires) {
       return res
@@ -99,7 +102,7 @@ const Register = catchAsyncErrors(
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Create user
-    const storedUser:any = await User.create({
+    const storedUser: any = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -183,4 +186,7 @@ const Logout = catchAsyncErrors(async (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
-export { Register, sendEmailVerification, Login, Logout };
+const authenticateMe = catchAsyncErrors(async (req: RequestWithUser, res: Response) => {  
+  res.status(200).json({ success: true, user:req.user });
+})
+export { Register, sendEmailVerification, Login, Logout, authenticateMe };

@@ -4,12 +4,13 @@ import {
   Business,
   BusinessAnalytics,
   Payment,
+  Review,
   User,
 } from "@/models/database.js";
 import { Request, Response, NextFunction } from "express";
 import { BusinessInterface, RequestWithUser } from "@/types/types.js";
 import { deleteImage, uploadImage } from "@/repositories/cloudinary.js";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import {
   createQueryByAI,
   getBusinessAdviceByAI,
@@ -32,6 +33,7 @@ const createBusiness = catchAsyncErrors(
       description,
       category,
       location,
+      phoneNumber,
     }: Partial<BusinessInterface> = req.body;
     const user = (await User.findOne({ where: { id: userId } })) as any;
 
@@ -51,6 +53,7 @@ const createBusiness = catchAsyncErrors(
       category,
       description,
       location,
+      phoneNumber,
     });
     const { id } = business.get();
     await BusinessAnalytics.create({
@@ -135,23 +138,34 @@ const deleteBusinessImage = catchAsyncErrors(
 
 const getAllBusinesses = catchAsyncErrors(
   async (req: Request, res: Response, _next: NextFunction) => {
-    const { skip = "0", limit = "10", name, category, location } = req.query;
-
+    const { skip = "0", limit = "10", name } = req.query;
+    let query: any = {};
     const offset = isNaN(Number(skip)) ? 0 : Number(skip);
     const limitValue = isNaN(Number(limit)) ? 10 : Number(limit);
-
-    const query: Record<string, any> = {};
-    if (name) query.name = { [Op.like]: `%${name}%` }; // Case-insensitive search
-    if (category) query.category = { [Op.like]: `%${category}%` };
-    if (location) query.location = { [Op.like]: `%${location}%` };
-
+    if (name) query = { name: { [Op.like]: `%${name}%` } };
     const { rows, count } = await Business.findAndCountAll({
+      where: query,
       offset,
       limit: limitValue,
-      where: query,
+      subQuery: false, // disables subquery wrapping
+      include: [
+        {
+          model: Review,
+          attributes: [],
+          required: false,
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn("AVG", Sequelize.col("Reviews.rating")), "avg_rating"],
+        ],
+      },
+      group: ["Business.id"],
     });
 
-    res.status(200).json({ success: true, businesses: rows, count });
+    res
+      .status(200)
+      .json({ success: true, businesses: rows, count: count.length });
   }
 );
 
@@ -159,7 +173,7 @@ const getAllBusinesses = catchAsyncErrors(
 
 const updateBusinessDetails = catchAsyncErrors(
   async (req: RequestWithUser, res: Response, _next: NextFunction) => {
-    const { name, description, location, category, payoutAccountId } = req.body;
+    const { name, description, location, category, phoneNumber } = req.body;
     const { userId } = req.user;
     const details = (await Business.findOne({
       where: { managerId: userId },
@@ -172,7 +186,7 @@ const updateBusinessDetails = catchAsyncErrors(
     details.description = description;
     details.location = location;
     details.category = category;
-    details.payoutAccountId = payoutAccountId;
+    details.phoneNumber = phoneNumber;
     await details.save();
     res.status(200).json({
       success: true,
@@ -261,27 +275,47 @@ const getBusinessByAi = catchAsyncErrors(
       });
     }
 
-    // Handle pagination (default: 10)
+    // Pagination defaults
     const limit = Number(req.query.limit) || 10;
     const offset = Number(req.query.offset) || 0;
+
+    // AI-generated conditions
     const searchConditions = Object.entries(response.response).reduce(
       (acc: any, [key, value]) => {
         if (typeof value === "string") {
-          acc[key] = { [Op.like]: `%${value.toLowerCase()}%` }; // Adds wildcard search
+          acc[key] = { [Op.like]: `%${value.toLowerCase()}%` };
         } else if (value !== null) {
-          acc[key] = value; // Keep non-string, non-null values as they are
+          acc[key] = value;
         }
         return acc;
       },
       {}
     );
+
+    // Query with Review join and rating avg
     const { count, rows } = await Business.findAndCountAll({
       where: { [Op.or]: { ...searchConditions } },
       limit,
       offset,
+      subQuery: false,
+      include: [
+        {
+          model: Review,
+          attributes: [],
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            Sequelize.fn("AVG", Sequelize.col("Reviews.rating")),
+            "averageRating",
+          ],
+        ],
+      },
+      group: ["Business.id"],
     });
 
-    if (count === 0) {
+    if (count.length === 0) {
       return res.status(400).json({
         success: false,
         rows,
@@ -290,7 +324,7 @@ const getBusinessByAi = catchAsyncErrors(
       });
     }
 
-    res.status(200).json({ success: true, count, rows });
+    res.status(200).json({ success: true, count: count.length, rows });
   }
 );
 
@@ -319,11 +353,25 @@ const getCustomerArrivals = catchAsyncErrors(
     const data = await Appointment.findAll({
       where: { intervalId },
       include: [
-        { model: User, attributes: ["id", "name", "email"] },
+        { model: User, attributes: ["id", "name", "email" , "phoneNumber"] },
         { model: Payment, attributes: ["id", "status", "amount"] },
       ],
     });
     res.status(200).json({ success: true, result: data });
+  }
+);
+
+const getMyBusiness = catchAsyncErrors(
+  async (req: RequestWithUser, res: Response, _next: NextFunction) => {
+    const { userId } = req.user;
+    const business = await Business.findOne({ where: { managerId: userId } });
+    if (!business) {
+      return res
+        .status(404)
+        .json({ success: false, message: "no business found" });
+    }
+
+    return res.status(200).json({ success: true, business });
   }
 );
 export {
@@ -336,5 +384,6 @@ export {
   getBusinessAnalytics,
   getBusinessByAi,
   getAdviceByAgent,
-  getCustomerArrivals
+  getCustomerArrivals,
+  getMyBusiness
 };

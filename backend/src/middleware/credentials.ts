@@ -12,7 +12,7 @@ const validateCredentials = (
     res.status(422).json({
       success: false,
       message: "Validation failed",
-      errors: errors.array(), // Send errors as an array
+      errors: errors.array()[0].msg, // Send errors as an array
     });
     return;
   }

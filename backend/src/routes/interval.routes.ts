@@ -11,16 +11,15 @@ const IntervalRouter = express.Router();
 import { body } from "express-validator";
 
 export const validateAppointmentInterval = [
-  body("type")
-    .isIn(["daily", "hourly"])
-    .withMessage("Type must be either 'daily' or 'hourly'"),
   body("startTime")
     .optional()
     .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/)
+    .notEmpty()
     .withMessage("Invalid time format (HH:MM:SS)"),
   body("endTime")
     .optional()
     .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/)
+    .notEmpty()
     .withMessage("Invalid time format (HH:MM:SS)"),
   body("maxSlots")
     .isInt({ min: 1 })

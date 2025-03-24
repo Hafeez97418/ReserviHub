@@ -1,21 +1,23 @@
-import { Outlet } from "react-router-dom"
-import NavBar from "../components/NavBar"
-import SideBar from "../components/SideBar"
-function Home() {
+import NavBar from "../components/NavBar";
+import SideBar from "../components/SideBar";
+import AuthGate from "../components/AuthGate";
 
+
+
+function Home() {
   return (
     <div>
-      <header className="sticky top-0 left-0 w-full">
+      <header className="sticky top-0 left-0 w-full z-40">
         <NavBar />
         <SideBar />
       </header>
-      <main className="flex ">
+      <main className="flex">
         <section className="p-4 w-full">
-         <Outlet/>
+          <AuthGate/>
         </section>
       </main>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

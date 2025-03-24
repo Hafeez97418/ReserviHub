@@ -37,3 +37,23 @@ export function getFormEntries(data: FormData) {
   }
   return obj;
 }
+
+export const commonHTTPConfig = {
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
+
+export const AsyncErrHandler = <T extends (...args: any[]) => Promise<any>>(
+  func: T
+) => {
+  return async (...args: Parameters<T>): Promise<ReturnType<T> | undefined> => {
+    try {
+      const res = await func(...args);
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};

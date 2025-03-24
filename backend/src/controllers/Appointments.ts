@@ -58,18 +58,10 @@ const bookAppointment = catchAsyncErrors(
       intervalId,
       businessId: interval.businessId,
       status: "pending",
-      startTime: null,
-      endTime: null,
+      startTime: interval.startTime,
+      endTime: interval.endTime,
       expiresAt: Date.now() + 10 * 60 * 1000,
     };
-
-    if (interval.type === "daily") {
-      AppointmentData.startTime = startDate;
-      const durationInMilliseconds = interval.duration * 1000;
-      AppointmentData.endTime = new Date(
-        startDate.getTime() + durationInMilliseconds
-      );
-    }
 
     await updatePeakHours(interval.businessId, startDate);
 
@@ -135,7 +127,9 @@ const getAppointments = catchAsyncErrors(
       delete query[userId];
       query.intervalId = intervalId;
     }
-    const appointments = await Appointment.findAll({ where: query });
+    const appointments = await Appointment.findAll({
+      where: query, include: { model: Payment }
+    });
     res.status(200).json({ success: true, appointments });
   }
 );
@@ -186,7 +180,7 @@ const confirmAppointment = catchAsyncErrors(
       return res.status(200).json({ success: true, appointment, payment });
     }
 
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true , appointment , payment});
   }
 );
 /**

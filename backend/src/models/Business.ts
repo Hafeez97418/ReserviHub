@@ -40,6 +40,15 @@ const Business = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    phoneNumber: {
+      type: DataTypes.STRING, // Changed to STRING
+      allowNull: false,
+      unique: true,
+      validate: {
+        len: [10, 15], // Basic length validation
+        isNumeric: true, // Ensure only numbers
+      },
+    },
   },
   {
     timestamps: true,

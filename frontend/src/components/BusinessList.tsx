@@ -1,44 +1,72 @@
 import { MapPin } from "lucide-react";
-import bList from "../../data/business_list.json";
 import { Card, CardDescription, CardFooter, CardHeader } from "./ui/card";
 import { Button } from "./ui/button";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import getAllBusinesses from "../features/business/action";
+import { replaceBusinessList, setBusinessList, setSearch, setSearchValue } from "../features/business/slice";
+import { TypographyH3 } from "./ui/typography";
 
 function BusinessList() {
+    const dispatch = useDispatch();
+    const [skip, setSkip] = useState(0);
     const [limit, setLimit] = useState(10);
-    const count = bList.length;
-    const list = bList.slice(0, limit);
+    const [count, setCount] = useState(NaN);
+    const [fetchType, setFetchType] = useState("search")
+    const { searchValue, search, businessList } = useSelector((state: any) => state.business);
+    useEffect(() => {
+        getAllBusinesses(skip, limit, searchValue).then((data) => {
+            if (searchValue.length > 0) {
+                setFetchType("search");
+                dispatch(replaceBusinessList(data.businesses))
+            } else {
+                setFetchType("auto");
+                dispatch(setBusinessList(data.businesses))
+            }
+            setCount(data.count || 0)
+        })
+        dispatch(setSearchValue(""));
+    }, [search])
 
     return (
-        <InfiniteScroll
-            className="grid md:grid-cols-4 gap-4 mt-8 w-full sm:grid-cols-2 "
-            dataLength={list.length}
-            next={() => setLimit(prev => prev + 10)}
-            hasMore={list.length < count}
-            loader={<h4>Loading...</h4>}
-        >
-            {list.map((data) => (
-                <Card key={data.id} className="gap-2 p-0">
-                    <img src={data.image} alt={`${data.name} image`} className="h-30 rounded-t-2xl object-center object-cover" />
-                    <div className="p-4 flex flex-col gap-1">
-                        <CardHeader className="p-0 m-0 gap-0">{data.name}</CardHeader>
-                        <div className="font-bold text-sm">Rating 4.8</div>
-                        <CardDescription>{data.description.slice(0, 50) + "..."}</CardDescription>
-                        <CardFooter className="p-0 flex justify-between">
-                            <span className="font-semibold text-sm flex gap-2 items-center">
-                                <MapPin className="w-4 h-4" />
-                                <span>{data.location}</span>
-                            </span>
-                            <Link to={`/business/${data.name}`}>
-                                <Button variant={"link"}>More</Button>
-                            </Link>
-                        </CardFooter>
-                    </div>
-                </Card>
-            ))}
-        </InfiniteScroll>
+        <div>
+            {count === 0 ? <TypographyH3 className="my-4">No Businesses found</TypographyH3> : null}
+            {fetchType === "search" ? <Button variant={"outline"} onClick={() => {
+                dispatch(setSearch())
+            }} className="my-4">reset feed</Button> : ""}
+            <InfiniteScroll
+                className="grid md:grid-cols-4 gap-4 mt-8 w-full sm:grid-cols-2 "
+                dataLength={businessList.length}
+                next={() => {
+                    setSkip(skip + limit)
+                    setLimit(prev => prev + 10)
+                }}
+                hasMore={businessList.length < count}
+                loader={<h4>Loading...</h4>}
+            >
+                {businessList.map((data: any) => (
+                    <Card key={data.id} className="gap-2 p-0">
+                        <img src={data.image || "/business-avatar.webp"} alt={`${data.name} image`} className="h-30 rounded-t-2xl object-center object-cover" />
+                        <div className="p-4 flex flex-col gap-1">
+                            <CardHeader className="p-0 m-0 gap-0">{data.name}</CardHeader>
+                            <div className="font-bold text-sm">Ratings: {data.avg_rating?.slice(0, 3) || 0}</div>
+                            <CardDescription>{data.description.slice(0, 50) + "..."}</CardDescription>
+                            <CardFooter className="p-0 flex justify-between">
+                                <span className="font-semibold text-sm flex gap-2 items-center">
+                                    <MapPin className="w-4 h-4" />
+                                    <span>{data.location}</span>
+                                </span>
+                                <Link to={`/business/${data.name}`}>
+                                    <Button variant={"link"}>More</Button>
+                                </Link>
+                            </CardFooter>
+                        </div>
+                    </Card>
+                ))}
+            </InfiniteScroll>
+        </div>
     );
 }
 

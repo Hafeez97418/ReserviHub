@@ -45,11 +45,11 @@ const Appointment = sequelize.define(
       defaultValue: "pending",
     },
     startTime: {
-      type: DataTypes.DATE, // Supports both date & time
+      type: DataTypes.TIME, // Supports both date & time
       allowNull: true, // Nullable for daily reservations
     },
     endTime: {
-      type: DataTypes.DATE, // Supports both date & time
+      type: DataTypes.TIME, // Supports both date & time
       allowNull: true, // Nullable for daily reservations
     },
     expiresAt: {

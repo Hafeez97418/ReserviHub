@@ -1,4 +1,5 @@
 import {
+  authenticateMe,
   Login,
   Logout,
   Register,
@@ -7,6 +8,7 @@ import {
 import { body, ValidationChain } from "express-validator";
 import express from "express";
 import { validateCredentials } from "@/middleware/credentials.js";
+import { isLoggedIn } from "@/middleware/common.js";
 
 const authRouter = express.Router();
 
@@ -63,6 +65,6 @@ authRouter.post(
 );
 
 authRouter.post("/logout", Logout);
-
+authRouter.get("/auth",isLoggedIn, authenticateMe)
 
 export default authRouter;

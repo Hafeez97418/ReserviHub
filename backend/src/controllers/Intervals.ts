@@ -32,9 +32,7 @@ const createAppointmentInterval = catchAsyncErrors(
       endTime,
       maxSlots,
       availableSlots,
-      type,
       price,
-      duration,
       description,
     }: AppointmentIntervalInterface = req.body;
 
@@ -49,37 +47,6 @@ const createAppointmentInterval = catchAsyncErrors(
     }
     const businessId = business.id;
 
-    // If type is 'daily', duration is required
-    if (type === "daily") {
-      if (!duration) {
-        return res.status(400).json({
-          success: false,
-          message: "Duration is required for daily reservation slot",
-        });
-      }
-      const result = await AppointmentInterval.create({
-        businessId,
-        price,
-        duration,
-        description,
-        maxSlots,
-        availableSlots,
-        type,
-      });
-      return res.status(201).json({
-        success: true,
-        message: "Appointment interval for daily reservations is created",
-        result,
-      });
-    }
-
-    // If type is not 'daily', startTime and endTime are required
-    if (!startTime || !endTime) {
-      return res.status(400).json({
-        success: false,
-        message: "startTime and endTime are required for hourly reservations",
-      });
-    }
 
     // Convert time to seconds
     const startSeconds = TimeToSeconds(startTime);
@@ -122,7 +89,6 @@ const createAppointmentInterval = catchAsyncErrors(
       description,
       maxSlots,
       availableSlots,
-      type,
     });
 
     return res.status(201).json({

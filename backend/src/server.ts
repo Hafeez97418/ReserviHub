@@ -23,6 +23,10 @@ import { Server } from "socket.io";
 const app = express();
 dotenv.config();
 const server = createServer(app);
+const corsOptions = {
+  origin: "http://localhost:5173", // must match your frontend URL exactly
+  credentials: true, // allow cookies, auth headers, etc.
+};
 export const io = new Server(server, {
   cors: {
     origin: "*", // Change this for security in production
@@ -38,7 +42,7 @@ declare module "http" {
   }
 }
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
 app.use(

@@ -11,13 +11,14 @@ import {
 } from "./ui/input-otp"
 import { Button } from "./ui/button";
 import { useState } from "react";
+import { register } from "../features/auth/action";
 
 function OTP_Form() {
     const otp_form = useSelector((state: any) => state.ui.otp_form);
     const dispatch = useDispatch();
-    const [otp, setOtp] = useState();
-    console.log(otp);
-    
+    const [otp, setOtp] = useState("");
+    const [alert, setAlert] = useState("this OTP is only valid for 10 minutes");
+    const [btn, setBtn] = useState("submit");
     return (
         <Dialog open={otp_form}>
             <DialogContent className="absolute top-0 left-0 w-screen h-screen flex items-center justify-center" >
@@ -30,8 +31,8 @@ function OTP_Form() {
                     <DialogDescription>we just sent an otp to your email for verification</DialogDescription>
                     <InputOTP maxLength={6} onChangeCapture={(e: any) => {
                         setOtp(e.target.value)
-                    }}>
-                        <InputOTPGroup>
+                    }} >
+                        <InputOTPGroup >
                             <InputOTPSlot index={0} />
                             <InputOTPSlot index={1} />
                             <InputOTPSlot index={2} />
@@ -44,15 +45,27 @@ function OTP_Form() {
                         </InputOTPGroup>
                     </InputOTP>
                     <div className="flex gap-4">
-                        <Button variant={"outline"}>submit</Button>
-                        <Button variant={"outline"}>cancel</Button>
+                        <Button variant={"outline"} onClick={async (e) => {
+                            e.preventDefault();
+                            setBtn("Loading...")
+                            const res = await register(otp);
+
+                            if (res.success) {
+                                setBtn("ok");
+                                window.location.replace("/");
+                            } else {
+                                setBtn("submit")
+                                setAlert(res.message);
+                            }
+                        }}>{btn}</Button>
                     </div>
-                    <DialogFooter className="gap-0 text-sm sm:justify-start">this OTP is only valid for 10 minutes</DialogFooter>
+                    <DialogFooter className="gap-0 text-sm sm:justify-start">
+                        {alert}
+                    </DialogFooter>
                 </div>
             </DialogContent>
         </Dialog>
-
-
+    
     )
 }
 

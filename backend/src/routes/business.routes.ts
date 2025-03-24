@@ -7,6 +7,7 @@ import {
   getBusinessAnalytics,
   getBusinessByAi,
   getCustomerArrivals,
+  getMyBusiness,
   updateBusinessDetails,
   uploadBusinessImage,
 } from "@/controllers/Business.js";
@@ -51,6 +52,14 @@ const businessValidation = [
     .notEmpty()
     .isString()
     .withMessage("description should not be empty"),
+  body("phoneNumber")
+    .trim()
+    .notEmpty()
+    .withMessage("Phone number is required")
+    .isNumeric()
+    .withMessage("Phone number must contain only digits")
+    .isLength({ min: 10, max: 10 })
+    .withMessage("Phone number must be exactly 10 digits"),
 ];
 
 //routes
@@ -110,6 +119,13 @@ businessRouter.get(
   isLoggedIn,
   checkRole("manager"),
   getCustomerArrivals
+);
+
+businessRouter.get(
+  "/business/personal",
+  isLoggedIn,
+  checkRole("manager"),
+  getMyBusiness
 );
 export default businessRouter;
 

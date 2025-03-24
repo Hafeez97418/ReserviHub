@@ -26,25 +26,21 @@ export interface BusinessInterface {
   description: string;
   category: string;
   location: string;
+  phoneNumber: string;
 }
-
 
 export interface AppointmentIntervalInterface {
   id?: string; // UUID, optional as it's auto-generated
   businessId: string; // UUID
-  type: "daily" | "hourly";
-  startTime?: string | null; // HH:MM:SS format, only for "hourly"
-  endTime?: string | null; // HH:MM:SS format, only for "hourly"
+  startTime: string; // HH:MM:SS format, only for "hourly"
+  endTime: string ; // HH:MM:SS format, only for "hourly"
   price: number;
   maxSlots: number;
   availableSlots: number;
   description?: string | null;
-  duration?: number | null; // Duration in seconds
-  bufferTime?: number; // Buffer time in seconds, default 0
   createdAt?: Date;
   updatedAt?: Date;
 }
-
 
 export interface analyticsInterface {
   totalAppointments: number;

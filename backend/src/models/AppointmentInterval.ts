@@ -19,17 +19,13 @@ const AppointmentInterval = sequelize.define(
       allowNull: false,
       onDelete: "CASCADE",
     },
-    type: {
-      type: DataTypes.ENUM("daily", "hourly"),
-      allowNull: false,
-    },
     startTime: {
-      type: DataTypes.TIME, // Only for hourly businesses
-      allowNull: true, // Should be NULL for "daily" type
+      type: DataTypes.TIME, 
+      allowNull: true, 
     },
     endTime: {
-      type: DataTypes.TIME, // Only for hourly businesses
-      allowNull: true, // Should be NULL for "daily" type
+      type: DataTypes.TIME, 
+      allowNull: true, 
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),
@@ -45,10 +41,6 @@ const AppointmentInterval = sequelize.define(
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    duration: {
-      type: DataTypes.INTEGER, // Stored in seconds
       allowNull: true,
     },
     booked: {
