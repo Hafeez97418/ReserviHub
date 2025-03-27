@@ -1,32 +1,35 @@
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { Clock, DollarSign, Trash } from "lucide-react";
+import { Clock, DollarSign, Loader, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Interval } from "../lib/types";
+import { useEffect, useState } from "react";
+import { deleteInterval, getAllSlots } from "../features/slots/action";
+import { setAlertMessage } from "../features/globalSlice";
+
+
+const DeleteBtn = ({ state }: { state: "none" | "loading" | "trash" }) => {
+    if (state === "none") {
+        return null
+    } else if (state === "loading") {
+        return <Loader className="animate-spin" />
+    }
+    else {
+        return <Trash />
+    }
+}
 
 const SlotsCard = () => {
-    // { businessId }: { businessId: string, }
-    const appointments = [{
-        id: 1,
-        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate doloremque amet sapiente tenetur repudiandae est, similique harum vitae quaerat. Officia laborum quod accusantium commodi quas, iste blanditiis architecto suscipit consequatur.",
-        startTime: "11:00:00",
-        endTime: "12:00:00",
-        price: "200.00",
-        maxSlots: 20,
-        availableSlots: 20,
-    },
-    {
-        id: 2,
-        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate doloremque amet sapiente tenetur repudiandae est, similique harum vitae quaerat. Officia laborum quod accusantium commodi quas, iste blanditiis architecto suscipit consequatur.",
-        startTime: "11:00:00",
-        endTime: "12:00:00",
-        price: "200.00",
-        maxSlots: 20,
-        availableSlots: 20,
-    },
-    ]
+    const { slots }: { slots: Interval[] } = useSelector((state: any) => state.slot)
+    const [delBtnState, setDelBtnState] = useState<"trash" | "loading">("trash");
+    const dispatch = useDispatch();
+    useEffect(() => {
+        getAllSlots();
+    }, [])
     return (
         <div>
-            {appointments.map((appointment => {
+            {slots.map((appointment => {
                 return <Card key={appointment.id} className="my-4 p-4 gap-4">
                     <div className="flex w-full gap-4">
                         <Clock />{appointment.startTime} - {appointment.endTime}
@@ -45,7 +48,12 @@ const SlotsCard = () => {
                         </div>
                     </div>
                     <div className="flex gap-4">
-                        <button className="focus:text-red-500 hover:text-purple-600"><Trash /></button>
+                        <button className="focus:text-red-500 hover:text-purple-600" onClick={async () => {
+                            setDelBtnState("loading");
+                            const res = await deleteInterval(appointment.id);
+                            dispatch(setAlertMessage(res.message));
+                            setDelBtnState("trash");
+                        }}><DeleteBtn state={delBtnState} /></button>
                         <Link to={`/merchant/leads/${appointment.id}`}>
                             <Button variant={"link"} >Leads</Button>
                         </Link>

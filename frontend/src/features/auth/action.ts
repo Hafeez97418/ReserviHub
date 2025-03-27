@@ -100,9 +100,7 @@ async function logout() {
       {},
       commonHTTPConfig
     );
-    if (res.data.success) {
-      window.location.replace("/");
-    }
+    return res;
   } catch (err) {
     return;
   }

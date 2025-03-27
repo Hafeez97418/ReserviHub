@@ -1,17 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { BarChart2, Bot, CalendarCheck2,  DollarSign } from "lucide-react";
+import { BarChart2, Bot, CalendarCheck2, DollarSign } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BusinessAnalytics } from "../lib/types";
 
-const DashboardStats = () => {
-    const data = {
-        totalAppointments: 7,
-        completedAppointments: 5,
-        missedAppointments: 2,
-        totalRevenue: "1000.00",
-        peakHours: [],
-        createdAt: "2025-03-21T14:31:46.000Z",
-        updatedAt: "2025-03-21T14:31:46.000Z"
-    };
+const DashboardStats = ({ analytics, advice }: { analytics: BusinessAnalytics; advice: string | undefined }) => {
+    const data = analytics;
 
     const barData = [
         { name: "Completed", value: data.completedAppointments },
@@ -66,7 +59,7 @@ const DashboardStats = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="font-serif">
-                    ReserviHub needs to aggressively acquire its first customers.  Zero completed appointments despite some revenue suggests a problem with the booking process or user acquisition. Focus on marketing and user experience improvements to drive bookings. Analyze why appointments are missed (payment failures or cancellations) and address those issues immediately.  Consider offering incentives for completing bookings to boost initial traction and generate positive reviews.
+                    {advice ? advice : "loading..."}
                 </CardContent>
             </Card>
         </div>

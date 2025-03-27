@@ -5,7 +5,7 @@ import { LibraryBig, MapPin, Star } from "lucide-react";
 import { TypographyH1 } from "../components/ui/typography";
 import Reviews from "../components/Reviews";
 import { useEffect, useState } from "react";
-import getAllBusinesses from "../features/business/action";
+import { getAllBusinesses } from "../features/business/action";
 import AppointmentSlots from "../components/AppointmentSlots";
 
 function BreadCrumbs({ pageName }: { pageName: string }) {

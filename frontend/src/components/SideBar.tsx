@@ -1,6 +1,6 @@
 import { Calendar, Home, LogIn, Power, VenetianMask } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DarkModeSwitch from "./DarkModeSwitch";
 import { logout } from "../features/auth/action";
 import { toggleSideBar } from "../features/ui/uiSlice";
@@ -10,6 +10,7 @@ function SideBar() {
         return state.ui.open_sidebar;
     })
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     return (
         <aside id="default-sidebar" className={`absolute bg-white dark:bg-black z-40 left-0 w-64 h-screen transition-transform  ${open_sidebar ? "translate-x-0" : "-translate-x-full"}  border-2 border-t-0 `} aria-label="Sidebar">
             <div className="h-full px-3 py-4 overflow-y-auto ">
@@ -48,6 +49,7 @@ function SideBar() {
                         <button className="flex items-center p-2 text-gray-900 rounded-lg hover:text-white focus:text-white dark:text-white focus:bg-red-500  hover:bg-red-500 group " onClick={() => {
                             logout();
                             dispatch(toggleSideBar())
+                            navigate("/login");
                         }}>
                             <Power />
                             <span className="flex-1 ms-3 whitespace-nowrap">Logout</span>

@@ -2,19 +2,18 @@ import { Menu, Search, X } from "lucide-react";
 import { TypographyH3 } from "./ui/typography";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
-import { useState } from "react";
 import DarkModeSwitch from "./DarkModeSwitch";
 import { Button } from "./ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSideBar } from "../features/ui/uiSlice";
-import { setSearch, setSearchValue } from "../features/business/slice";
+import { setAiSearch, setSearch, setSearchValue } from "../features/business/slice";
 import { useNavigate } from "react-router-dom";
 
 function NavBar() {
     const navigate = useNavigate();
-    const { searchValue
+    const { searchValue, aiSearch
     } = useSelector((state: any) => state.business);
-    const [aiToggleState, setAiToggleState] = useState(false);
+
     const dispatch = useDispatch();
     const open_sidebar = useSelector((state: any) => state.ui.open_sidebar);
     return (
@@ -48,13 +47,13 @@ function NavBar() {
                     </div>
                 </Button>
                 <Toggle
-                    data-state={aiToggleState}
-                    onPressedChange={(pressed) => {
-                        setAiToggleState(pressed);
+                    data-state={aiSearch}
+                    onPressedChange={() => {
+                        dispatch(setAiSearch());
                     }}
                     style={{
-                        backgroundColor: aiToggleState ? "#bb02db" : "",
-                        color: aiToggleState ? "white" : ""
+                        backgroundColor: aiSearch ? "#bb02db" : "",
+                        color: aiSearch ? "white" : ""
                     }}
                 >
                     AI

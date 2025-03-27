@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import store from "../app/store";
+import { setMessage } from "../features/globalSlice";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -52,8 +54,19 @@ export const AsyncErrHandler = <T extends (...args: any[]) => Promise<any>>(
     try {
       const res = await func(...args);
       return res;
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      let res = error?.response?.data;
+      if (res) {
+        if (res.errors) {
+          store.dispatch(setMessage(res.errors));
+        } else {
+          store.dispatch(setMessage(res.message));
+        }
+        return res;
+      }
+      store.dispatch(setMessage(error.message || "oops something went wrong"));
+      return error;
     }
   };
 };
+

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@cashfreepayments/cashfree-js':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@radix-ui/react-dialog':
         specifier: ^1.1.6
         version: 1.1.6(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -126,6 +129,9 @@ packages:
   '@babel/runtime@7.26.10':
     resolution: {integrity: sha512-2WJMeRQPHKSPemqk/awGrAiuFfzBmOIPXKizAsVhWH9YJqLZ0H+HS4c8loHGgW6utJ3E/ejXQUsiGaQy2NZ9Fw==}
     engines: {node: '>=6.9.0'}
+
+  '@cashfreepayments/cashfree-js@1.0.5':
+    resolution: {integrity: sha512-fP9wi9mseXJmESGIkD9vb6RAKdSZw42jXiQY2LUt5A2STyEqMv0mYLgK2zqpMNSbdK9QdN1c4YnEv9mmyxC8mg==}
 
   '@esbuild/aix-ppc64@0.25.1':
     resolution: {integrity: sha512-kfYGy8IdzTGy+z0vFGvExZtxkFlA4zAxgKEahG9KE1ScBjpQnFsNOX8KTU5ojNru5ed5CVoJYXFtoxaq5nFbjQ==}
@@ -1981,6 +1987,8 @@ snapshots:
   '@babel/runtime@7.26.10':
     dependencies:
       regenerator-runtime: 0.14.1
+
+  '@cashfreepayments/cashfree-js@1.0.5': {}
 
   '@esbuild/aix-ppc64@0.25.1':
     optional: true

@@ -2,11 +2,25 @@ import { TypographyH1 } from "../components/ui/typography";
 import { Textarea } from "../components/ui/textarea";
 import { LabelInput } from "../components/Inputs";
 import { Button } from "../components/ui/button";
+import { getFormEntries } from "../lib/utils";
+import { createBusiness } from "../features/business/action";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../features/auth/action";
 
 function MerchantRegister() {
+    const navigate = useNavigate();
     return (
         <div className="max-w-2xl mx-auto p-8 rounded-2xl shadow-lg">
-            <form className="flex flex-col gap-6">
+            <form className="flex flex-col gap-6" onSubmit={async (e) => {
+                e.preventDefault();
+                let data = new FormData(e.currentTarget);
+                data = getFormEntries(data);
+                const res = await createBusiness(data);
+                if (res.success) {
+                    logout()
+                    navigate("/login")
+                }
+            }}>
                 <div className="mb-6 text-center">
                     <TypographyH1>Create a Business Account</TypographyH1>
                     <p className="text-gray-500 text-sm mt-2">Fill in the details below to register your business.</p>
@@ -26,6 +40,7 @@ function MerchantRegister() {
                             className="resize-none min-h-[100px]"
                             id="description"
                             name="description"
+                            required
                         />
                     </div>
 
@@ -45,7 +60,7 @@ function MerchantRegister() {
                         placeHolder="XXXXXXXXXXX"
                         id="phoneNumber"
                         labelText="Phone Number"
-                        type="tel"
+                        type="number"
                     />
                 </div>
 

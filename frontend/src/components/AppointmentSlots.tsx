@@ -1,36 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { CalendarClock, ArrowRight } from "lucide-react";
-const data = [
-    {
-        "id": "8867d5cf-2474-4622-96b8-184d0d9deb1b",
-        "businessId": "02c68ded-b95a-4795-9544-ad82495b6228",
-        "startTime": "09:00:00",
-        "endTime": "10:00:00",
-        "price": "200.00",
-        "maxSlots": 50,
-        "availableSlots": 48,
-        "description": "haircut",
+import { useSelector } from "react-redux";
+import {  Interval } from "../lib/types";
+import { useEffect } from "react";
+import { getSlotsForUsers } from "../features/slots/action";
 
-        "createdAt": "2025-03-23T17:26:52.000Z",
-        "updatedAt": "2025-03-23T17:57:24.000Z"
-    },
-    {
-        "id": "3fa9e441-544b-4f9e-ba4b-d125e8ffb80d",
-        "businessId": "02c68ded-b95a-4795-9544-ad82495b6228",
-        "startTime": "13:00:00",
-        "endTime": "14:00:00",
-        "price": "200.00",
-        "maxSlots": 50,
-        "availableSlots": 50,
-        "description": "haircut",
-
-        "createdAt": "2025-03-24T15:41:49.000Z",
-        "updatedAt": "2025-03-24T15:41:49.000Z"
-    }
-]
-
-const AppointmentCard = ({ appointment }: { appointment: any }) => {
+const AppointmentCard = ({ appointment }: { appointment:Interval }) => {
     return (
         <Card className="w-full max-w-md shadow-xl rounded-2xl transition-transform hover:scale-105">
             <CardHeader className="flex items-center justify-between">
@@ -47,7 +23,10 @@ const AppointmentCard = ({ appointment }: { appointment: any }) => {
                     <span>Price: ${appointment.price}</span>
                     <span>Available: {appointment.availableSlots}/{appointment.maxSlots}</span>
                 </div>
-                <Button className="w-full flex items-center justify-center gap-2">
+                <Button className="w-full flex items-center justify-center gap-2" onClick={() => {
+                    // Checkout("payment-session-id") todo 
+
+                }}>
                     Book Slot <ArrowRight size={16} />
                 </Button>
             </CardContent>
@@ -56,9 +35,14 @@ const AppointmentCard = ({ appointment }: { appointment: any }) => {
 };
 
 const AppointmentSlots = ({ businessId }: { businessId: string }) => {
+    const { slots } = useSelector((state: { slot: { slots: Interval[] } }) => state.slot);
+    useEffect(() => {
+        getSlotsForUsers(businessId); 
+
+    },[])
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
-            {data.map((item) => (
+            {slots.map((item) => (
                 <AppointmentCard key={item.id} appointment={item} />
             ))}
         </div>

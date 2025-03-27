@@ -39,7 +39,7 @@ function Reviews({ businessId }: ReviewsProps) {
     }, [businessId]);
 
     return (
-        <div>
+        <div className="my-8">
             <TypographyH3>Reviews</TypographyH3>
 
             {myReview ? (

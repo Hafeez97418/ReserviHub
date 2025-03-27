@@ -321,6 +321,7 @@ const getBusinessByAi = catchAsyncErrors(
         rows,
         message:
           "Could not find any businesses with this prompt. Try something else.",
+        count: 0,
       });
     }
 
@@ -353,7 +354,7 @@ const getCustomerArrivals = catchAsyncErrors(
     const data = await Appointment.findAll({
       where: { intervalId },
       include: [
-        { model: User, attributes: ["id", "name", "email" , "phoneNumber"] },
+        { model: User, attributes: ["id", "name", "email", "phoneNumber"] },
         { model: Payment, attributes: ["id", "status", "amount"] },
       ],
     });
@@ -385,5 +386,5 @@ export {
   getBusinessByAi,
   getAdviceByAgent,
   getCustomerArrivals,
-  getMyBusiness
+  getMyBusiness,
 };

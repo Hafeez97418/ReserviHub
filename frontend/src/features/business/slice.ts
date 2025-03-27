@@ -4,7 +4,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const iniState = {
   businessList: [],
   searchValue: "",
-  search:true,
+  search: true,
+  aiSearch: false,
 };
 
 const businessSlice = createSlice({
@@ -27,10 +28,18 @@ const businessSlice = createSlice({
     },
     setSearch: (state) => {
       state.search = !state.search;
-    }
+    },
+    setAiSearch: (state) => {
+      state.aiSearch = !state.aiSearch;
+    },
   },
 });
 
-export const { setBusinessList, replaceBusinessList, setSearchValue , setSearch } =
-  businessSlice.actions;
+export const {
+  setBusinessList,
+  replaceBusinessList,
+  setSearchValue,
+  setSearch,
+  setAiSearch,
+} = businessSlice.actions;
 export default businessSlice;

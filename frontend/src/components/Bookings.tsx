@@ -2,9 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { CalendarClock } from "lucide-react";
+import { Appointment } from "../lib/types";
+import { TypographyH1 } from "./ui/typography";
 
-const MyBookings = ({ appointments }: { appointments: any }) => {
-    return (
+const MyBookings = ({ appointments }: { appointments: Appointment[] | undefined }) => {
+
+    return (appointments && appointments.length > 0 ?
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
             {appointments.map((appointment: any) => (
                 <Card key={appointment.id} className="w-full max-w-md shadow-xl rounded-2xl">
@@ -38,7 +41,7 @@ const MyBookings = ({ appointments }: { appointments: any }) => {
                     </CardContent>
                 </Card>
             ))}
-        </div>
+        </div> : <TypographyH1>No Bookings found</TypographyH1>
     );
 };
 

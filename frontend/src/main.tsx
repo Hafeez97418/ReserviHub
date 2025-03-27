@@ -16,10 +16,13 @@ import Credentials from './pages/Credentials.tsx'
 import Bookings from './pages/Bookings.tsx'
 import Slots from './pages/Slots.tsx'
 import Leads from './pages/Leads.tsx'
+import { ErrorAlert, NormalAlert } from './components/Alert.tsx'
+import ScrollTop from './lib/ScrollTop.tsx'
 
 HandleDarkMode();
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
+    <ScrollTop />
     <Provider store={store}>
       <Routes>
         <Route path="/" element={<Home />} >
@@ -38,6 +41,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="login" element={<Login />} />
         <Route path='*' element={<div>404 not found</div>} />
       </Routes>
+      <ErrorAlert />
+      <NormalAlert />
     </Provider>
   </BrowserRouter>
 )

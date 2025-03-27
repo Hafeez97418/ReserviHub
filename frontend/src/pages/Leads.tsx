@@ -58,8 +58,8 @@ const mockAppointments = [
         updatedAt: "2025-03-24T16:00:00.000Z",
         User: {
             id: "f2d1c1b3-b987-4c0e-9255-1d49cb0e2c8e",
-            name: "Ayesha",
-            email: "ayesha@example.com",
+            name: "hafeez",
+            email: "hafeez@example.com",
             phoneNumber: "9812345678"
         },
         Payment: {

@@ -5,8 +5,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import getAllBusinesses from "../features/business/action";
-import { replaceBusinessList, setBusinessList, setSearch, setSearchValue } from "../features/business/slice";
+import { getAllBusinesses, getBusinessByAi } from "../features/business/action";
+import { replaceBusinessList, setAiSearch, setBusinessList, setSearch, setSearchValue } from "../features/business/slice";
 import { TypographyH3 } from "./ui/typography";
 
 function BusinessList() {
@@ -15,25 +15,35 @@ function BusinessList() {
     const [limit, setLimit] = useState(10);
     const [count, setCount] = useState(NaN);
     const [fetchType, setFetchType] = useState("search")
-    const { searchValue, search, businessList } = useSelector((state: any) => state.business);
+    const { searchValue, search, businessList, aiSearch } = useSelector((state: any) => state.business);
     useEffect(() => {
-        getAllBusinesses(skip, limit, searchValue).then((data) => {
-            if (searchValue.length > 0) {
+        (async () => {
+            let data;
+            if (aiSearch) {
+                data = await getBusinessByAi(searchValue);
+            } else {
+                data = await getAllBusinesses(skip, limit, searchValue);
+            }
+            if (searchValue.length > 0 && !aiSearch) {
                 setFetchType("search");
                 dispatch(replaceBusinessList(data.businesses))
+            } else if (aiSearch) {
+                setFetchType("search");
+                dispatch(replaceBusinessList(data.rows));
             } else {
                 setFetchType("auto");
                 dispatch(setBusinessList(data.businesses))
             }
             setCount(data.count || 0)
-        })
-        dispatch(setSearchValue(""));
+            dispatch(setSearchValue(""));
+        })();
     }, [search])
 
     return (
         <div>
             {count === 0 ? <TypographyH3 className="my-4">No Businesses found</TypographyH3> : null}
             {fetchType === "search" ? <Button variant={"outline"} onClick={() => {
+                if (aiSearch) dispatch(setAiSearch());
                 dispatch(setSearch())
             }} className="my-4">reset feed</Button> : ""}
             <InfiniteScroll
