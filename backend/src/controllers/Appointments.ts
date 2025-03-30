@@ -12,7 +12,6 @@ import { catchAsyncErrors } from "@/utils/errors/common.js";
 import { sendEvent, updatePeakHours, updateRevenue } from "@/utils/utils.js";
 import { Request, Response, NextFunction } from "express";
 
-
 /**
  * create new appointment.
  */
@@ -77,7 +76,7 @@ const bookAppointment = catchAsyncErrors(
         customer_email: user.email,
       },
       order_meta: {
-        return_url: `${process.env.FRONTEND_BASE_URL}/complete`,
+        return_url: process.env.FRONTEND_BASE_URL,
       },
     });
     if (!order.success) {
@@ -128,7 +127,8 @@ const getAppointments = catchAsyncErrors(
       query.intervalId = intervalId;
     }
     const appointments = await Appointment.findAll({
-      where: query, include: { model: Payment }
+      where: query,
+      include: { model: Payment },
     });
     res.status(200).json({ success: true, appointments });
   }
@@ -142,7 +142,7 @@ const confirmAppointment = catchAsyncErrors(
     const { returnUrl } = req.query as { returnUrl: string | undefined };
     const appointment = (await Appointment.findByPk(appointmentId)) as any;
 
-    if (appointment.status !== "pending") {
+    if (appointment.status === "completed") {
       return res.status(400).json({
         success: false,
         message: `your appointment cannot be confirmed because it's status is ${appointment.status}`,
@@ -166,7 +166,10 @@ const confirmAppointment = catchAsyncErrors(
       where: { appointmentId },
     })) as any;
 
-    if (verification.response.order_status === "PAID") {
+    if (
+      verification.response.order_status === "PAID" &&
+      appointment.status !== "cancelled"
+    ) {
       appointment.status = "confirmed";
       payment.status = "paid";
       appointment.expiresAt = null;
@@ -176,11 +179,16 @@ const confirmAppointment = catchAsyncErrors(
       if (returnUrl) {
         return res.redirect(returnUrl); // ✅ Prevents duplicate response
       }
-
-      return res.status(200).json({ success: true, appointment, payment });
+      return res
+        .status(200)
+        .json({ success: true, appointment, payment, order_status: "PAID" });
     }
-
-    res.status(200).json({ success: true , appointment , payment});
+    res.status(200).json({
+      success: true,
+      appointment,
+      payment,
+      order_status: "FAILED",
+    });
   }
 );
 /**
@@ -369,10 +377,10 @@ const webHookRequests = catchAsyncErrors(
                 0,
                 interval.availableSlots + 1
               );
-               sendEvent(interval.id, "failed_appointment", {
-                 count: 1,
-                 available: interval.availableSlots,
-               });
+              sendEvent(interval.id, "failed_appointment", {
+                count: 1,
+                available: interval.availableSlots,
+              });
               interval.booked = false;
               await interval.save();
             }

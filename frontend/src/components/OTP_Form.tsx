@@ -12,9 +12,10 @@ import {
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { register } from "../features/auth/action";
+import { State } from "../lib/types";
 
 function OTP_Form() {
-    const otp_form = useSelector((state: any) => state.ui.otp_form);
+    const otp_form = useSelector((state: State) => state.ui.otp_form);
     const dispatch = useDispatch();
     const [otp, setOtp] = useState("");
     const [alert, setAlert] = useState("this OTP is only valid for 10 minutes");
@@ -29,9 +30,9 @@ function OTP_Form() {
                         }} className="cursor-pointer" />
                     </div>
                     <DialogDescription>we just sent an otp to your email for verification</DialogDescription>
-                    <InputOTP maxLength={6} onChangeCapture={(e: any) => {
-                        setOtp(e.target.value)
-                    }} >
+                    <InputOTP maxLength={6} onChangeCapture={(e: React.FormEvent<HTMLInputElement>) => {
+                        setOtp(e.currentTarget.value);
+                    }}>
                         <InputOTPGroup >
                             <InputOTPSlot index={0} />
                             <InputOTPSlot index={1} />
@@ -65,7 +66,7 @@ function OTP_Form() {
                 </div>
             </DialogContent>
         </Dialog>
-    
+
     )
 }
 

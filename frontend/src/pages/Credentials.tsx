@@ -8,9 +8,9 @@ import { deleteBusiness, deleteImage, getMyBusiness, updateBusiness } from "../f
 import { useEffect, useState } from "react";
 import { getFormEntries } from "../lib/utils";
 import { useNavigate } from "react-router-dom";
-import { Dialog } from "../components/ui/dialog";
+import { Dialog, DialogDescription } from "../components/ui/dialog";
 import ImageUploadForm from "../components/ImageForm";
-import { DialogContent } from "@radix-ui/react-dialog";
+import { DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { Business } from "../lib/types";
 import { setAlertMessage } from "../features/globalSlice";
 
@@ -23,8 +23,8 @@ const BusinessInfo = ({ data }: { data: Business | null }) => {
             <form className="flex flex-col gap-4" onSubmit={async (e) => {
                 e.preventDefault();
                 setSaveBtnTxt("loading");
-                let data = new FormData(e.currentTarget);
-                data = getFormEntries(data)
+                const raw_data = new FormData(e.currentTarget);
+                const data = getFormEntries(raw_data)
                 await updateBusiness(data);
                 setSaveBtnTxt("save");
             }}>
@@ -75,7 +75,7 @@ function Credentials() {
     const [data, setData] = useState<Business | null>(null);
     const [delBtnTxt, setDelBtnTxt] = useState("Delete");
     const [openImgForm, setImgForm] = useState(false);
-    const [image, setImage] = useState();
+    const [image, setImage] = useState<string>();
     const [deleteBtn, setDeleteBtn] = useState<"none" | "loading" | "trash">("none");
 
     const navigate = useNavigate();
@@ -91,7 +91,7 @@ function Credentials() {
             }
         })();
     }, []);
- 
+
     return (
         <div className="p-4">
             <TypographyH1>Your Business Credentials</TypographyH1>
@@ -126,6 +126,8 @@ function Credentials() {
                 <Dialog open={openImgForm}>
                     <DialogContent className="fixed z-40 top-0
                      left-0 w-full h-full flex flex-col items-center justify-center">
+                        <DialogTitle className="hidden">Upload Image</DialogTitle>
+                        <DialogDescription className="hidden">Enhance your business profile</DialogDescription>
                         <ImageUploadForm closeForm={setImgForm} setImage={setImage} setDeleteBtn={setDeleteBtn} />
                     </DialogContent>
                 </Dialog>

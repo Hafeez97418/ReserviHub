@@ -4,9 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import DarkModeSwitch from "./DarkModeSwitch";
 import { logout } from "../features/auth/action";
 import { toggleSideBar } from "../features/ui/uiSlice";
+import { State } from "../lib/types";
 
 function SideBar() {
-    const open_sidebar: any = useSelector((state: any) => {
+    const open_sidebar = useSelector((state: State) => {
         return state.ui.open_sidebar;
     })
     const dispatch = useDispatch();

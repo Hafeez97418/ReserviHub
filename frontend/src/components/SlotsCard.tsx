@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Clock, DollarSign, Loader, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Interval } from "../lib/types";
+import { Interval, State } from "../lib/types";
 import { useEffect, useState } from "react";
 import { deleteInterval, getAllSlots } from "../features/slots/action";
 import { setAlertMessage } from "../features/globalSlice";
@@ -21,7 +21,7 @@ const DeleteBtn = ({ state }: { state: "none" | "loading" | "trash" }) => {
 }
 
 const SlotsCard = () => {
-    const { slots }: { slots: Interval[] } = useSelector((state: any) => state.slot)
+    const { slots }: { slots: Interval[] } = useSelector((state: State) => state.slot)
     const [delBtnState, setDelBtnState] = useState<"trash" | "loading">("trash");
     const dispatch = useDispatch();
     useEffect(() => {
@@ -40,7 +40,7 @@ const SlotsCard = () => {
                     <div className="flex gap-4">
                         <div className="flex gap-2 px-2 py-8 text-xl font-bold flex-col border-2 items-center justify-center w-40">
                             <span className="text-sm uppercase">Max slots</span>
-                            {appointment.availableSlots}
+                            {appointment.maxSlots}
                         </div>
                         <div className="flex gap-2 px-2 py-8 text-xl font-bold flex-col border-2 items-center justify-center w-40">
                             <span className="text-sm uppercase">Available slots</span>

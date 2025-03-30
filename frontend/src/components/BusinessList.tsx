@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllBusinesses, getBusinessByAi } from "../features/business/action";
 import { replaceBusinessList, setAiSearch, setBusinessList, setSearch, setSearchValue } from "../features/business/slice";
 import { TypographyH3 } from "./ui/typography";
+import { Business, State } from "../lib/types";
 
 function BusinessList() {
     const dispatch = useDispatch();
@@ -15,7 +16,7 @@ function BusinessList() {
     const [limit, setLimit] = useState(10);
     const [count, setCount] = useState(NaN);
     const [fetchType, setFetchType] = useState("search")
-    const { searchValue, search, businessList, aiSearch } = useSelector((state: any) => state.business);
+    const { searchValue, search, businessList, aiSearch } = useSelector((state: State) => state.business);
     useEffect(() => {
         (async () => {
             let data;
@@ -56,7 +57,7 @@ function BusinessList() {
                 hasMore={businessList.length < count}
                 loader={<h4>Loading...</h4>}
             >
-                {businessList.map((data: any) => (
+                {businessList.map((data: Business) => (
                     <Card key={data.id} className="gap-2 p-0">
                         <img src={data.image || "/business-avatar.webp"} alt={`${data.name} image`} className="h-30 rounded-t-2xl object-center object-cover" />
                         <div className="p-4 flex flex-col gap-1">

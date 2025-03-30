@@ -8,14 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleSideBar } from "../features/ui/uiSlice";
 import { setAiSearch, setSearch, setSearchValue } from "../features/business/slice";
 import { useNavigate } from "react-router-dom";
+import { State } from "../lib/types";
 
 function NavBar() {
     const navigate = useNavigate();
     const { searchValue, aiSearch
-    } = useSelector((state: any) => state.business);
+    } = useSelector((state: State) => state.business);
 
     const dispatch = useDispatch();
-    const open_sidebar = useSelector((state: any) => state.ui.open_sidebar);
+    const open_sidebar = useSelector((state: State) => state.ui.open_sidebar);
     return (
         <nav className="flex md:items-center md:flex-row p-4 justify-between flex-col items-start gap-4 border-2 bg-white w-full dark:bg-black dark:text-white"  >
             <div className="flex items-center gap-4 ">

@@ -18,15 +18,13 @@ function Slots() {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         const seconds = date.getSeconds().toString().padStart(2, '0');
 
-        const time24 = `${hours}:${minutes}:${seconds}`;
-        console.log(time24);
-        
+        const time24 = `${hours}:${minutes}:${seconds}`;        
         return time24;
     };
 
     const [date, setDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
-    const [saveBtn, setSaveBtn] = useState<any>("Create");
+    const [saveBtn, setSaveBtn] = useState<React.ReactNode>("Create");
 
     const [data, setData] = useState<Partial<Interval>>({
         price: 0,
@@ -73,8 +71,6 @@ function Slots() {
 
                     <Button onClick={async () => {
                         setSaveBtn(<Loader />);
-                        console.log(data);
-
                         const res = await createInterval(data);
                         if (res.success) {
                             dispatch(setAlertMessage(res.message));

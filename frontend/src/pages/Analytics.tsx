@@ -25,7 +25,6 @@ function Analytics() {
         const data = await getAdvice(id);   
         if (data.result) {
           data.result.replace(/"|\\n/g, '');
-          console.log(data.result);
           sessionStorage.setItem(`adviceFor${id}`, JSON.stringify(data.result));
           setAdvice(data.result);
         }

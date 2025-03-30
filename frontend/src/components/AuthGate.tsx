@@ -25,8 +25,6 @@ export default function AuthGate({ userRole }: { userRole?: "manager" | "admin" 
             navigate("/login");
             return;
         }
-        console.log(`auth ${auth} --> user-role ${userRole} --> role ${role}`);
-
         // Redirect if role does not match the required userRole
         if (auth === "AUTHORIZED" && userRole && role !== userRole) {
             if (userRole === "manager") {

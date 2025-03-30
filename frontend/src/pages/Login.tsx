@@ -27,7 +27,8 @@ function Login() {
                             e.preventDefault()
                             const data = new FormData(e.currentTarget);
                             setBtn("Loading...")
-                            const res = await login(getFormEntries(data))
+                            const entries = getFormEntries(data) as Record<string, string>;
+                            const res = await login(entries);
                             if (res.success) {
                                 navigate("/");
                             } else {

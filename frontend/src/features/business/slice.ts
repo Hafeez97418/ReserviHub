@@ -1,7 +1,13 @@
 // authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import { Business } from "../../lib/types";
 
-const iniState = {
+const iniState: {
+  businessList: Business[];
+  searchValue: string;
+  search: boolean;
+  aiSearch: boolean;
+} = {
   businessList: [],
   searchValue: "",
   search: true,
@@ -14,10 +20,10 @@ const businessSlice = createSlice({
   reducers: {
     setBusinessList: (state, action) => {
       const merged = [...state.businessList, ...action.payload];
-      const unique = Array.from(
+      const unique: Business[] = Array.from(
         new Map(merged.map((item) => [item.id, item])).values()
       );
-      state.businessList = unique as any;
+      state.businessList = unique;
     },
     replaceBusinessList: (state, action) => {
       const newList = action.payload;

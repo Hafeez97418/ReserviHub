@@ -7,7 +7,6 @@ const createMyReview = AsyncErrHandler(
     businessId: string,
     data: { rating: number; review: string }
   ): Promise<any | undefined> => {
-    console.log(data);
     const res = await axios.post(
       `${BACKEND_URL}/api/v1/review/${businessId}`,
       data,
@@ -23,7 +22,6 @@ const getMyReview = AsyncErrHandler(
       ? `${BACKEND_URL}/api/v1/review/all/${businessId}`
       : `${BACKEND_URL}/api/v1/review/${businessId}`;
     const res = await axios.get(url, commonHTTPConfig);
-    console.log(`${BACKEND_URL}/api/v1/review/${businessId}`);
     return res.data.reviews;
   }
 );

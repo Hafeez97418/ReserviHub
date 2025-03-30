@@ -18,6 +18,7 @@ import Slots from './pages/Slots.tsx'
 import Leads from './pages/Leads.tsx'
 import { ErrorAlert, NormalAlert } from './components/Alert.tsx'
 import ScrollTop from './lib/ScrollTop.tsx'
+import Confirmation from './pages/Confirmation.tsx'
 
 HandleDarkMode();
 createRoot(document.getElementById('root')!).render(
@@ -29,7 +30,8 @@ createRoot(document.getElementById('root')!).render(
           <Route index element={<Listings />} />
           <Route path='business/:businessName' element={<BusinessDetails />} />
           <Route path="merchant/create-account" element={<MerchantRegister />} />
-          <Route path="bookings" element={<Bookings />} />
+          <Route path="bookings" element={<Bookings />}/>
+          <Route path='confirm/:appointmentId' element={<Confirmation />} />
         </Route>
         <Route path='/merchant' element={<MerchantDashboard />}>
           <Route index element={<Analytics />} />

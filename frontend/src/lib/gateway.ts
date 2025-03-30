@@ -2,10 +2,10 @@
 import { load } from "@cashfreepayments/cashfree-js";
 
 export default async function Checkout(sessionId: string) {
-  let cashfree = await load({
+  const cashfree = await load({
     mode: "sandbox",
   });
-  let checkoutOptions = {
+  const checkoutOptions = {
     paymentSessionId: sessionId,
     redirectTarget: "_self",
   };

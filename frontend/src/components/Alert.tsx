@@ -7,9 +7,10 @@ import {
 } from "./ui/alert"
 import { useDispatch, useSelector } from "react-redux"
 import { setAlertMessage, setMessage } from "../features/globalSlice";
+import { State } from "../lib/types";
 
 export function ErrorAlert() {
-    const { errMsg, showErr  } = useSelector((state: any) => state.global)
+    const { errMsg, showErr  } = useSelector((state: State) => state.global)
     const dispatch = useDispatch();
 
     return (
@@ -28,7 +29,7 @@ export function ErrorAlert() {
 }
 
 export function NormalAlert() {
-    const { Msg, showAlert} = useSelector((state: any) => state.global)
+    const { Msg, showAlert} = useSelector((state: State) => state.global)
     const dispatch = useDispatch();
 
     return (

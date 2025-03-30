@@ -15,9 +15,7 @@ const getAllSlots = AsyncErrHandler(async () => {
 const getSlotsForUsers = AsyncErrHandler(async (businessId:string) => {
    const res = await Axios.get(
      BACKEND_URL + "/api/v1/appointment-interval/" + businessId
-  );
-  console.log(res.data);
-  
+  );  
    store.dispatch(replaceSlots(res.data.data));
    return res.data;
 })

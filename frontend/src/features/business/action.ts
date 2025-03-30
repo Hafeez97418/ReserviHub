@@ -88,6 +88,14 @@ const getAdvice = AsyncErrHandler(async (businessId) => {
   return res.data.result;
 })
 
+const getCustomers = AsyncErrHandler(async (intervalId) => {
+  const res = await axios.get(
+    BACKEND_URL + `/api/v1/business/arrivals/${intervalId}`,
+    commonHTTPConfig
+  );  
+  return res.data;
+});
+
 export {
   getAllBusinesses,
   getBusinessByAi,
@@ -98,5 +106,6 @@ export {
   deleteBusiness,
   uploadImage,
   deleteImage,
-  getAdvice
+  getAdvice,
+  getCustomers
 };

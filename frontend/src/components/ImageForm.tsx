@@ -10,8 +10,8 @@ import { setAlertMessage } from "../features/globalSlice";
 
 interface ImageUploadFormProps {
     closeForm: (value: boolean) => void;
-    setImage: Function,
-    setDeleteBtn: Function
+    setImage: React.Dispatch<React.SetStateAction<string | undefined>>,
+    setDeleteBtn: React.Dispatch<React.SetStateAction<"trash" | "none" | "loading">>
 }
 
 export default function ImageUploadForm({ closeForm, setImage, setDeleteBtn }: ImageUploadFormProps) {
@@ -53,7 +53,7 @@ export default function ImageUploadForm({ closeForm, setImage, setDeleteBtn }: I
                 dispatch(setAlertMessage("Image upload failed"));
                 setSaveBtnTxt("try again")
             }
-        } catch (error) {
+        } catch (_error) {
             dispatch(setAlertMessage("Error uploading image"));
             setSaveBtnTxt("try again")
         }

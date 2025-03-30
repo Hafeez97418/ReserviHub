@@ -1,33 +1,65 @@
 import Appointment from "@/models/Appointment.js";
 import BusinessAnalytics from "@/models/BusinessAnalytics.js";
+import { sequelize } from "@/repositories/connection.mysql.js";
 import { io } from "@/server.js";
 import cron from "node-cron";
 import { Op, Sequelize } from "sequelize";
 
 const appointmentSideJobs = () => {
   cron.schedule("*/10 * * * *", async () => {
+    const transaction = await sequelize.transaction();
     try {
+      //  Update Appointment statuses
       await Appointment.update(
-        { status: "failed", expiresAt: null },
+        {
+          status: Sequelize.literal(`
+            CASE 
+              WHEN status = 'pending' AND expiresAt < NOW() THEN 'failed'
+              WHEN status = 'confirmed' AND endTime < NOW() THEN 'completed'
+              ELSE status
+            END
+          `),
+          expiresAt: Sequelize.literal(`
+            CASE 
+              WHEN status = 'pending' AND expiresAt < NOW() THEN NULL 
+              ELSE expiresAt
+            END
+          `),
+        },
         {
           where: {
-            status: "pending",
-            expiresAt: { [Op.lt]: new Date() },
+            [Op.or]: [
+              { status: "pending", expiresAt: { [Op.lt]: new Date() } },
+              { status: "confirmed", endTime: { [Op.lt]: new Date() } },
+            ],
           },
+          transaction,
         }
       );
 
-      await Appointment.update(
-        { status: "completed" },
-        {
-          where: {
-            status:"confirmed",
-            endTime: { [Op.lt]: new Date() }, // Appointments whose endTime has passed
-          },
-        }
+      // Update Payment statuses using JOIN
+      await sequelize.query(
+        `
+        UPDATE Payments 
+        INNER JOIN Appointments ON Payments.appointmentId = Appointments.id
+        SET Payments.status = 
+          CASE 
+            WHEN Appointments.status = 'failed' THEN 'failed'
+            WHEN Appointments.status = 'completed' THEN 'paid'
+            ELSE Payments.status
+          END
+        WHERE Appointments.status IN ('failed', 'completed');
+        `,
+        { transaction }
       );
-    } catch (error: any) {
-      console.error("Failed to cancel expired appointments ❌", error.message);
+
+      await transaction.commit();
+    } catch (error:any) {
+      await transaction.rollback();
+      console.error(
+        "❌ Failed to update appointments and payments:",
+        error.message
+      );
     }
   });
 };
@@ -84,13 +116,7 @@ const updatePeakHours = async (businessId: string, startTime: Date) => {
 
   // Explicitly mark JSON field as changed
   analytics.changed("peakHours", true);
-  console.log(analytics.peakHours, analytics.totalAppointments);
-
   // Save the updated record
-  await analytics
-    .save()
-    .then(() => console.log("Successfully saved peakHours"))
-    .catch((err: any) => console.error("Error saving peakHours:", err));
 };
 
 const getAnalytics = async (businessId: string) => {
@@ -144,9 +170,7 @@ const getAnalytics = async (businessId: string) => {
 };
 
 const updateRevenue = async (businessId: string, amount: number) => {
-  try {
-    console.log(businessId);
-    
+  try {    
     const analytics = (await BusinessAnalytics.findOne({
       where: { businessId },
     })) as any;
@@ -158,9 +182,7 @@ const updateRevenue = async (businessId: string, amount: number) => {
     // Ensure proper numerical addition
     analytics.totalRevenue = (
       parseFloat(analytics.totalRevenue) + amount
-    ).toFixed(2);
-    console.log(analytics.totalRevenue);
-    
+    ).toFixed(2);    
     await analytics.save(); // Ensure async save is awaited
 
     return { success: true, analytics };

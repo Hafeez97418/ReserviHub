@@ -4,14 +4,14 @@ import {
   commonHTTPConfig,
   getFormEntries,
 } from "../../lib/utils";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 async function verifyEmail(e: FormEvent) {
-  let data = new FormData(e.currentTarget as HTMLFormElement);
+  const  raw_data = new FormData(e.currentTarget as HTMLFormElement);
   e.preventDefault();
-  data = getFormEntries(data);
+  const data = getFormEntries(raw_data);
   let res = null;
   try {
     if (!BACKEND_URL) {
@@ -22,11 +22,14 @@ async function verifyEmail(e: FormEvent) {
       data,
       commonHTTPConfig
     );
-  } catch (error: any) {
-    if (error.response.data) {
-      return { success: false, message: error.response.data.message };
-    }
-    return { success: false, message: error.message };
+  } catch (error: unknown) {
+       if (error instanceof AxiosError && error.response?.data) {
+         return { success: false, message: error.response.data.message };
+       }
+       if (error instanceof Error) {
+         return { success: false, message: error.message };
+       }
+       return { success: false, message: "An unknown error occurred" };
   }
   sessionStorage.setItem("user-details", JSON.stringify(data));
   return { success: true, res };
@@ -34,7 +37,7 @@ async function verifyEmail(e: FormEvent) {
 
 async function register(otp: string) {
   try {
-    let userDetails = JSON.parse(
+   const userDetails = JSON.parse(
       sessionStorage.getItem("user-details") as string
     );
 
@@ -48,8 +51,6 @@ async function register(otp: string) {
       ...userDetails,
       otp: Number(otp),
     };
-    console.log(payload);
-
     const res = await axios.post(
       BACKEND_URL + "/api/v1/register",
       payload,
@@ -57,15 +58,18 @@ async function register(otp: string) {
     );
 
     return { success: true, message: res.data.message };
-  } catch (error: any) {
-    if (error.response) {
+  } catch (error: unknown) {
+    if (error instanceof AxiosError && error.response) {
       return { success: false, message: error.response.data.message };
     }
-    return { success: false, message: error.message };
+    if (error instanceof Error) {
+      return { success: false, message: error.message };
+    }
+    return { success: false, message: "An unknown error occurred" };
   }
 }
 
-async function login({ email, password }: Record<any, string>) {
+async function login({ email, password }: Record<string, string>) {
   try {
     const res = await axios.post(
       BACKEND_URL + "/api/v1/login",
@@ -73,11 +77,14 @@ async function login({ email, password }: Record<any, string>) {
       commonHTTPConfig
     );
     return { success: true, message: res.data.message };
-  } catch (error: any) {
-    if (error.response) {
-      return { success: false, message: error.response.data.message };
-    }
-    return { success: false, message: error.message };
+  } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return { success: false, message: error.response.data.message };
+      }
+      if (error instanceof Error) {
+        return { success: false, message: error.message };
+      }
+      return { success: false, message: "An unknown error occurred" };
   }
 }
 const authenticateMe = AsyncErrHandler(async () => {
@@ -93,16 +100,12 @@ const authenticateMe = AsyncErrHandler(async () => {
   return res.data;
 });
 
-async function logout() {
-  try {
+const logout = AsyncErrHandler(async () => {
     const res = await axios.post(
       BACKEND_URL + "/api/v1/logout",
       {},
       commonHTTPConfig
     );
     return res;
-  } catch (err) {
-    return;
-  }
-}
+});
 export { verifyEmail, register, login, authenticateMe, logout };

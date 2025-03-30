@@ -24,9 +24,7 @@ const checkRole:any =
   (req: RequestWithUser, res: Response, next: NextFunction) => {
     const { role } = req.user;
     
-    if (role !== _role) {
-      console.log(role , _role);
-      
+    if (role !== _role) {      
       res.status(401).json({ success: false, message: "Forbidden" });
       return;
     }

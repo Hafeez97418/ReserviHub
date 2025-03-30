@@ -84,8 +84,8 @@ const processRefund = async (appointmentId: string) => {
         },
       }
     );
-
-    if (response.data[0].refund_status === "SUCCESS") {
+    
+    if (response.data[0]?.refund_status === "SUCCESS" || response.statusText === "OK") {
       appointment.status = "cancelled";
       payment.status = "refunded";
       await appointment.save();

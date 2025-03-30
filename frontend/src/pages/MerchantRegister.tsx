@@ -13,8 +13,8 @@ function MerchantRegister() {
         <div className="max-w-2xl mx-auto p-8 rounded-2xl shadow-lg">
             <form className="flex flex-col gap-6" onSubmit={async (e) => {
                 e.preventDefault();
-                let data = new FormData(e.currentTarget);
-                data = getFormEntries(data);
+                const  raw_data = new FormData(e.currentTarget);
+                const data = getFormEntries(raw_data);
                 const res = await createBusiness(data);
                 if (res.success) {
                     logout()

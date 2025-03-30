@@ -27,18 +27,18 @@ export interface Business {
   phoneNumber: string;
   createdAt: string;
   updatedAt: string;
+  avg_rating: string;
 }
 
 export interface Interval {
   id: string;
   description: string;
-  startTime: string; 
-  endTime: string; 
-  price: string | number; 
+  startTime: string;
+  endTime: string;
+  price: string | number;
   maxSlots: number;
   availableSlots: number;
-};
-
+}
 
 export interface OrderMeta {
   notify_url: string | null;
@@ -103,3 +103,24 @@ export interface Appointment {
   Payment: Payment;
 }
 
+export type State = {
+  global: {
+    errMsg: string;
+    showErr: boolean;
+    Msg: string;
+    showAlert: boolean;
+  };
+  ui: {
+    open_sidebar: boolean;
+    otp_form: boolean;
+  };
+  slot: {
+    slots: Interval[];
+  };
+  business: {
+    businessList: [];
+    searchValue: string;
+    search: boolean;
+    aiSearch: boolean;
+  };
+};

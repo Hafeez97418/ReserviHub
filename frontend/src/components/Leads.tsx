@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { CalendarClock } from "lucide-react";
+import { TypographyH3 } from "./ui/typography";
 
 interface User {
     id: string;
@@ -30,13 +31,13 @@ interface LeadsProps {
 
 const LeadsComponent: React.FC<LeadsProps> = ({ leads }) => {
     const filteredAppointments = leads.filter(
-        (appointment) => appointment.status !== "failed" && appointment.status !== "cancelled"
+        (appointment) => appointment.status === "pending" || appointment.status === "confirmed"
     );
 
     return (
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-            {filteredAppointments.map((appointment) => (
-                <Card key={appointment.id} className="w-full max-w-md shadow-xl rounded-2xl">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+            {filteredAppointments.length > 0 ? filteredAppointments.map((appointment) => (
+                <Card key={appointment.id} className="w-full shadow-xl rounded-2xl">
                     <CardHeader className="flex items-center justify-between">
                         <CardTitle className="text-xl font-semibold flex items-center gap-2">
                             <CalendarClock className="text-primary" />
@@ -56,7 +57,7 @@ const LeadsComponent: React.FC<LeadsProps> = ({ leads }) => {
                         </div>
                     </CardContent>
                 </Card>
-            ))}
+            )) : <TypographyH3>No customers found</TypographyH3>}
         </div>
     );
 };
