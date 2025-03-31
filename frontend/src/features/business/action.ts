@@ -2,7 +2,7 @@ import axios from "axios";
 import { AsyncErrHandler, commonHTTPConfig } from "../../lib/utils";
 import { logout } from "../auth/action";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL  ??  "";
 
 const getAllBusinesses = AsyncErrHandler(
   async (skip: number, limit: number, name?: string) => {

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { AsyncErrHandler, commonHTTPConfig } from "../../lib/utils";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL  ??  "";
 
 const createMyReview = AsyncErrHandler(
   async (

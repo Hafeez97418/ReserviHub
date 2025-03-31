@@ -67,10 +67,21 @@ export const AsyncErrHandler = <T extends (...args: any[]) => Promise<any>>(
       }
       if (error instanceof Error) {
         store.dispatch(setMessage(error.message));
-        return error as any
+        return error as any;
       }
-      store.dispatch(setMessage("oops something went wrong"))
-      return error as any
+      store.dispatch(setMessage("oops something went wrong"));
+      return error as any;
     }
   };
 };
+
+/**
+ * Pauses execution for a given number of seconds.
+ * Use this only for development to simulate delays in async functions.
+ * 
+ * @param {number} seconds - The number of seconds to pause execution.
+ * @returns {Promise<void>} A promise that resolves after the given time.
+ */
+export function pause(seconds: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+}

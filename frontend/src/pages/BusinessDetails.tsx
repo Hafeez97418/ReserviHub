@@ -7,6 +7,8 @@ import Reviews from "../components/Reviews";
 import { useEffect, useState } from "react";
 import { getAllBusinesses } from "../features/business/action";
 import AppointmentSlots from "../components/AppointmentSlots";
+import { Business } from "../lib/types";
+import { BusinessDetailsSkeleton } from "../components/Skeletons";
 
 function BreadCrumbs({ pageName }: { pageName: string }) {
     return <Breadcrumb>
@@ -29,13 +31,17 @@ function BreadCrumbs({ pageName }: { pageName: string }) {
 
 function BusinessDetails() {
     const name = useParams().businessName;
-    const [businessDetails, setBusinessDetails]: [businessDetails: any, setBusinessDetails: Function] = useState()
+    const [businessDetails, setBusinessDetails] = useState<Business>()
+    const [Loading, setLoading] = useState<boolean>();
     useEffect(() => {
+        setLoading(true);
         (async () => {
             const { businesses } = await getAllBusinesses(0, 1, name);
             setBusinessDetails(businesses[0]);
+            setLoading(false);
         })()
     }, []);
+    if (Loading === true || Loading === undefined) return <BusinessDetailsSkeleton />;
     return (
         businessDetails ?
             <div>

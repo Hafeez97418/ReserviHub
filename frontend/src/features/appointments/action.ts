@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AsyncErrHandler, commonHTTPConfig } from "../../lib/utils";
 import { Payment } from "../../lib/types";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "";
 
 const getAllAppointments = AsyncErrHandler(async () => {
   const res = await axios.get(

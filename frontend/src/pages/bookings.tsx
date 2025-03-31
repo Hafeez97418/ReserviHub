@@ -4,6 +4,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbS
 import { useEffect, useState } from "react"
 import { getAllAppointments } from "../features/appointments/action"
 import { Appointment } from "../lib/types"
+import { MyBookingsSkeleton } from "../components/Skeletons"
 
 function BreadCrumbs({ pageName }: { pageName: string }) {
   return <Breadcrumb>
@@ -36,8 +37,8 @@ function Bookings() {
     <div>
       <BreadCrumbs pageName="bookings" />
       <div className="my-8">
-        {isLoading ? "Loading..." :
-          
+        {isLoading ? <MyBookingsSkeleton /> :
+
           <MyBookings appointments={appointments} />}
       </div>
     </div>

@@ -3,7 +3,7 @@ import { AsyncErrHandler, commonHTTPConfig } from "../../lib/utils";
 import store from "../../app/store";
 import { addSlot, removeSlot, replaceSlots } from "./slice";
 import { Interval } from "../../lib/types";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL  ??  "";
 
 const getAllSlots = AsyncErrHandler(async () => {
   const businessId = sessionStorage.getItem("businessId");

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { BarChart2, Bot, CalendarCheck2, DollarSign } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { BusinessAnalytics } from "../lib/types";
+import { Skeleton } from "./ui/skeleton";
 
 const DashboardStats = ({ analytics, advice }: { analytics: BusinessAnalytics; advice: string | undefined }) => {
     const data = analytics;
@@ -59,7 +60,12 @@ const DashboardStats = ({ analytics, advice }: { analytics: BusinessAnalytics; a
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="font-serif">
-                    {advice ? advice : "loading..."}
+                    {advice ? advice : <div className="flex flex-col gap-4">
+                        <Skeleton className="w-full h-6" />
+                        <Skeleton className="w-1/2 h-6" />
+                        <Skeleton className="w-full h-6" />
+                        <Skeleton className="w-1/2 h-6" />
+                    </div>}
                 </CardContent>
             </Card>
         </div>

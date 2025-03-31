@@ -13,10 +13,11 @@ import ImageUploadForm from "../components/ImageForm";
 import { DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { Business } from "../lib/types";
 import { setAlertMessage } from "../features/globalSlice";
+import { BusinessDetailsSkeleton, CredentialsSkeleton } from "../components/Skeletons";
 
 
 const BusinessInfo = ({ data }: { data: Business | null }) => {
-    if (!data) return <p>Loading business details...</p>;
+    if (!data) return <BusinessDetailsSkeleton/>;
     const [saveBtnTxt, setSaveBtnTxt] = useState("save");
     return (
         <div className="w-full p-4 rounded-2xl shadow-lg">
@@ -77,9 +78,11 @@ function Credentials() {
     const [openImgForm, setImgForm] = useState(false);
     const [image, setImage] = useState<string>();
     const [deleteBtn, setDeleteBtn] = useState<"none" | "loading" | "trash">("none");
+    const [Loading, setLoading] = useState<boolean>(false);
 
     const navigate = useNavigate();
     useEffect(() => {
+        setLoading(true);
         (async () => {
             const res = await getMyBusiness();
             if (res.business) {
@@ -89,9 +92,10 @@ function Credentials() {
             if (res.business.image !== null) {
                 setDeleteBtn("trash")
             }
+            setLoading(false);
         })();
     }, []);
-
+    if (Loading === true) return <CredentialsSkeleton />
     return (
         <div className="p-4">
             <TypographyH1>Your Business Credentials</TypographyH1>

@@ -6,7 +6,7 @@ import {
 } from "../../lib/utils";
 import axios, { AxiosError } from "axios";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL  ??  "";
 
 async function verifyEmail(e: FormEvent) {
   const  raw_data = new FormData(e.currentTarget as HTMLFormElement);
