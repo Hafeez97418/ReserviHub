@@ -96,6 +96,10 @@ app.use(express.urlencoded({ extended: false }));
 // Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/", express.static(frontendPath));
+app.use((_req, res, next) => {
+  res.setHeader("Content-Security-Policy", "form-action 'self' https://sandbox.cashfree.com");
+  next();
+});
 
 // Socket.io connection handling
 io.on("connection", (socket) => {
